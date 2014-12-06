@@ -1,0 +1,60 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#ffffff"
+    tools:context=".Splash"
+    android:touchscreenBlocksFocus="true" >
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:background="#607d8b" >
+
+        <ImageButton
+            android:id="@+id/more"
+            android:src="@drawable/more"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_margin="20dp"
+            android:layout_gravity="center"
+            android:background="@null"/>
+
+        <ImageView
+            android:id="@+id/header"
+            android:src="@drawable/logo"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="20dp"
+            android:layout_gravity="center" />
+
+        <ImageButton
+            android:id="@+id/search"
+            android:src="@drawable/search"
+            android:layout_width="20dp"
+            android:layout_margin="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:background="@null"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/body"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:background="#ffffff" >
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
