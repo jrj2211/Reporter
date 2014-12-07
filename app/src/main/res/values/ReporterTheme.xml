@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ReporterTitleBarBG">
+        <item name="android:background">#151515</item>
+    </style>
+
+    <style name="ReporterTheme" parent="android:Theme">
+        <item name="android:windowTitleSize">55dip</item>
+        <item name="android:windowTitleBackgroundStyle">@style/ReporterTitleBarBG</item>
+    </style>
+</resources>
