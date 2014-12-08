@@ -3,6 +3,7 @@ package com.reportermag.reporter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -10,6 +11,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 /**
  * Created by Joe on 12/7/2014.
@@ -17,16 +19,20 @@ import android.widget.ImageView;
 public class CustomActivity extends Activity {
 
     private boolean searchActivated = false;
+    protected LinearLayout titlebar;
+    protected static Typeface OpenSansBold;
+    protected Activity ActivityAsContainer = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-        setContentView(R.layout.activity_splash);
+        setContentView(R.layout.activity_article);
         this.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
 
-        final Activity ActivityAsContainer = this;
+        titlebar = (LinearLayout) findViewById(R.id.header);
+        OpenSansBold = Typeface.createFromAsset(this.getAssets(), "fonts/OpenSans-Bold.ttf");
 
         final ImageView logoView = (ImageView) findViewById(R.id.logo);
         final EditText searchField = (EditText) findViewById(R.id.header_search_field);
@@ -40,7 +46,11 @@ public class CustomActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                if(false == searchActivated) {
+                if(searchActivated) {
+                    searchField.setVisibility(View.GONE);
+                    logoView.setVisibility(View.VISIBLE);
+                    searchActivated = false;
+                } else {
                     searchField.setVisibility(View.VISIBLE);
                     searchField.requestFocus();
 
@@ -48,10 +58,6 @@ public class CustomActivity extends Activity {
 
                     logoView.setVisibility(View.GONE);
                     searchActivated = true;
-                } else {
-                    searchField.setVisibility(View.GONE);
-                    logoView.setVisibility(View.VISIBLE);
-                    searchActivated = false;
                 }
             }
         });

@@ -25,7 +25,7 @@ public class PageContents extends AsyncTask<String, Void, String> {
 
         try {
             HttpClient client = new DefaultHttpClient();
-            HttpGet request = new HttpGet("http://reporter.rit.edu/api/article/200.json");
+            HttpGet request = new HttpGet(urls[0]);
             HttpResponse response = client.execute(request);
 
             HttpEntity entity = response.getEntity();

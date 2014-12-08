@@ -3,7 +3,8 @@
 
     <string name="app_name">Reporter</string>
     <string name="title_activity_drawer">Drawer</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="title_activity_article">Article</string>
+    <string name="title_activity_home">Home</string>
 
+    <string name="action_settings">Settings</string>
 </resources>

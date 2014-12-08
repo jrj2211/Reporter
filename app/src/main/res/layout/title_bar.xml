@@ -1,10 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/header"
     android:layout_width="fill_parent"
     android:layout_height="55dp"
     android:orientation="horizontal"
-    android:background="#151515" >
+    android:background="#151515">
 
     <ImageButton
         android:id="@+id/header_more"

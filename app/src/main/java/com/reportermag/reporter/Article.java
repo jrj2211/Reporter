@@ -1,7 +1,6 @@
 package com.reportermag.reporter;
 
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.LinearLayout;
@@ -19,22 +18,27 @@ import java.util.Date;
 
 public class Article extends CustomActivity implements AsyncResponse {
 
-    PageContents page = new PageContents();
-    int mainColor;
-    String author;
-    String title;
-    String section;
-    JSONArray body;
-    int date;
+    private PageContents page = new PageContents();
+    private int mainColor;
+    private String author;
+    private String title;
+    private String section;
+    private JSONArray body;
+    private String imgLink;
+    private int date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_splash);
+        setContentView(R.layout.activity_article);
 
-        page.delegate = this;
-        page.execute("http://reporter.rit.edu/api/article/200.json");
+        int nodeid = this.getIntent().getIntExtra("id", 0);
+
+        if(nodeid != 0) {
+            page.delegate = this;
+            page.execute("http://reporter.rit.edu/api/article/"+Integer.toString(nodeid)+".json");
+        }
     }
 
     public void processFinish(String result)  {
@@ -48,21 +52,20 @@ public class Article extends CustomActivity implements AsyncResponse {
             title = json.get("title").toString();
             section = json.get("section").toString();
             date = Integer.decode(json.get("date").toString());
+            imgLink = json.get("imgLink").toString();
             body = (JSONArray) json.get("body");
         } catch(Exception e) {
             Log.w("REPORTER","Error parsing JSON");
         }
 
-        LinearLayout header =(LinearLayout) this.findViewById(R.id.header);
-        header.setBackgroundColor(mainColor);
 
-        Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/OpenSans-Bold.ttf");
+        titlebar.setBackgroundColor(mainColor);
 
         TextView titleView = new TextView(this);
         titleView.setText(title);
         titleView.setTextSize(25);
         titleView.setTextColor(mainColor);
-        titleView.setTypeface(font);
+        titleView.setTypeface(OpenSansBold);
         container.addView(titleView);
 
         SimpleDateFormat formatter = new SimpleDateFormat("MMM d, yyyy");
