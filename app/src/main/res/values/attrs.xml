@@ -9,4 +9,10 @@
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 
+
+    <item type="id" name="homeArticleTitle" />
+    <item type="id" name="homeArticleImage" />
+    <item type="id" name="homeArticleSection" />
+    <item type="id" name="homeArticleByline" />
+
 </resources>
