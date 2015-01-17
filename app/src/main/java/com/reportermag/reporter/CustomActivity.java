@@ -2,9 +2,9 @@ package com.reportermag.reporter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -32,6 +32,7 @@ public class CustomActivity extends Activity {
         this.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
 
         titlebar = (LinearLayout) findViewById(R.id.header);
+
         OpenSansBold = Typeface.createFromAsset(this.getAssets(), "fonts/OpenSans-Bold.ttf");
 
         final ImageView logoView = (ImageView) findViewById(R.id.logo);
@@ -41,7 +42,7 @@ public class CustomActivity extends Activity {
         final ImageButton searchButton = (ImageButton) findViewById(R.id.header_search);
         searchButton.setOnClickListener(new View.OnClickListener() {
 
-          final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
             @Override
             public void onClick(View v) {
@@ -66,9 +67,16 @@ public class CustomActivity extends Activity {
         moreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ActivityAsContainer.getClass() != Drawer.class) {
-                    Intent intent = new Intent(ActivityAsContainer, Drawer.class);
-                    startActivity(intent);
+                try {
+                    DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    View drawer = findViewById(R.id.left_drawer);
+                    if (drawerLayout.isDrawerOpen(drawer)) {
+                        drawerLayout.closeDrawer(drawer);
+                    } else {
+                        drawerLayout.openDrawer(drawer);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });

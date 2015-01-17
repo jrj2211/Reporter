@@ -7,4 +7,8 @@
     <string name="title_activity_home">Home</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="URL_FRONT">http://reporter.rit.edu/api/frontpage-mobile.json</string>
+    <string name="URL_SECTIONS">http://reporter.rit.edu/api/sections.json</string>
+    <string name="URL_ARTICLE">http://reporter.rit.edu/api/article/</string>
 </resources>

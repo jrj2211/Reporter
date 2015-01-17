@@ -14,5 +14,6 @@
     <item type="id" name="homeArticleImage" />
     <item type="id" name="homeArticleSection" />
     <item type="id" name="homeArticleByline" />
-
+    <item type="id" name="homeArticleThumbnail" />
+    <item type="id" name="homeArticleSummary" />
 </resources>
