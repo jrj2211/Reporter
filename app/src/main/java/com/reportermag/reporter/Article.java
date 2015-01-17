@@ -14,11 +14,11 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 
 public class Article extends CustomActivity implements AsyncResponse {
 
-    private PageContents page = new PageContents();
     private int mainColor;
     private String author;
     private String title;
@@ -35,77 +35,80 @@ public class Article extends CustomActivity implements AsyncResponse {
 
         int nodeid = this.getIntent().getIntExtra("id", 0);
 
-        if(nodeid != 0) {
-            page.delegate = this;
-            page.execute("http://reporter.rit.edu/api/article/"+Integer.toString(nodeid)+".json");
+        if (nodeid != 0) {
+            PageContents article = new PageContents(this);
+            article.execute("article", "http://reporter.rit.edu/api/article/" + Integer.toString(nodeid) + ".json");
         }
     }
 
-    public void processFinish(String result)  {
-        LinearLayout container =(LinearLayout) this.findViewById(R.id.body);
-        Log.w("REPORTER", "Downloaded page JSON contents");
-
+    public void processFinish(List<String> result) {
         try {
-            JSONObject json = new JSONObject(result.trim());
-            mainColor = Color.parseColor(json.get("sectionColor").toString());
-            author = json.get("author_fullname").toString();
-            title = json.get("title").toString();
-            section = json.get("section").toString();
-            date = Integer.decode(json.get("date").toString());
-            imgLink = json.get("imgLink").toString();
-            body = (JSONArray) json.get("body");
-        } catch(Exception e) {
-            Log.w("REPORTER","Error parsing JSON");
+            LinearLayout container = (LinearLayout) this.findViewById(R.id.body);
+            Log.i("REPORTER", "Downloaded page JSON contents");
+
+            try {
+                JSONObject json = new JSONObject(result.get(1).trim());
+                mainColor = Color.parseColor(json.get("sectionColor").toString());
+                author = json.get("author_fullname").toString();
+                title = json.get("title").toString();
+                section = json.get("section").toString();
+                date = Integer.decode(json.get("date").toString());
+                imgLink = json.get("imgLink").toString();
+                body = (JSONArray) json.get("body");
+            } catch (Exception e) {
+                Log.w("REPORTER", "Error parsing JSON");
+            }
+
+
+            titlebar.setBackgroundColor(mainColor);
+
+            TextView titleView = new TextView(this);
+            titleView.setText(title);
+            titleView.setTextSize(25);
+            titleView.setTextColor(mainColor);
+            titleView.setTypeface(OpenSansBold);
+            container.addView(titleView);
+
+            SimpleDateFormat formatter = new SimpleDateFormat("MMM d, yyyy");
+
+            TextView byline = new TextView(this);
+            byline.setText("By " + author + " on " + formatter.format(new Date(date * 1000L)));
+            byline.setTextSize(15);
+            byline.setTextColor(Color.BLACK);
+            container.addView(byline);
+
+            parse(body);
+        } catch (Exception e) {
+            Log.e("REPORTER", "Error downloading json contents.");
         }
-
-
-        titlebar.setBackgroundColor(mainColor);
-
-        TextView titleView = new TextView(this);
-        titleView.setText(title);
-        titleView.setTextSize(25);
-        titleView.setTextColor(mainColor);
-        titleView.setTypeface(OpenSansBold);
-        container.addView(titleView);
-
-        SimpleDateFormat formatter = new SimpleDateFormat("MMM d, yyyy");
-
-        TextView byline = new TextView(this);
-        byline.setText("By " + author + " on " + formatter.format(new Date(date * 1000L)) );
-        byline.setTextSize(15);
-        byline.setTextColor(Color.BLACK);
-        container.addView(byline);
-
-        parse(body);
     }
 
 
     private void parse(JSONObject json) {
         try {
-            String tag = json.get("tag").toString();
             parse((JSONArray) json.get("contents"));
-        } catch(Exception e) {
-            Log.w("REPORTER","Invalid JSON format.");
+        } catch (Exception e) {
+            Log.w("REPORTER", "Invalid JSON format.");
         }
     }
 
     private void parse(JSONArray json) {
-        LinearLayout container =(LinearLayout) this.findViewById(R.id.body);
+        LinearLayout container = (LinearLayout) this.findViewById(R.id.body);
 
-        for(int i = 0; i < json.length(); i++) {
+        for (int i = 0; i < json.length(); i++) {
             try {
-                if(json.get(i) instanceof JSONObject) {
+                if (json.get(i) instanceof JSONObject) {
                     parse((JSONObject) json.get(i));
-                } else if(json.get(i) instanceof String) {
+                } else if (json.get(i) instanceof String) {
                     TextView content = new TextView(this);
                     content.setText(json.get(i).toString());
                     content.setTextSize(10);
                     content.setTextColor(Color.BLACK);
-                    content.setPadding(0,0,0,20);
+                    content.setPadding(0, 0, 0, 20);
                     container.addView(content);
                 }
-            } catch(Exception e) {
-                Log.w("REPORTER","Invalid JSON format.");
+            } catch (Exception e) {
+                Log.w("REPORTER", "Invalid JSON format.");
             }
         }
     }

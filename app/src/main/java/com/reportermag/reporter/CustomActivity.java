@@ -13,15 +13,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-/**
- * Created by Joe on 12/7/2014.
- */
 public class CustomActivity extends Activity {
 
     private boolean searchActivated = false;
     protected LinearLayout titlebar;
     protected static Typeface OpenSansBold;
-    protected Activity ActivityAsContainer = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +43,7 @@ public class CustomActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                if(searchActivated) {
+                if (searchActivated) {
                     searchField.setVisibility(View.GONE);
                     logoView.setVisibility(View.VISIBLE);
                     searchActivated = false;
@@ -69,7 +65,7 @@ public class CustomActivity extends Activity {
             public void onClick(View v) {
                 try {
                     DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-                    View drawer = findViewById(R.id.left_drawer);
+                    View drawer = findViewById(R.id.drawer);
                     if (drawerLayout.isDrawerOpen(drawer)) {
                         drawerLayout.closeDrawer(drawer);
                     } else {

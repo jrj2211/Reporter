@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -20,10 +21,11 @@ import com.reportermag.reporter.util.onArticleClickListener;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.List;
+
 
 public class Home extends CustomActivity implements AsyncResponse {
 
-    private PageContents page = new PageContents();
     private static final String TAG = "Home";
     private JSONArray json;
     private LinearLayout articles;
@@ -38,8 +40,11 @@ public class Home extends CustomActivity implements AsyncResponse {
         articles = (LinearLayout) findViewById(R.id.articles);
         inflater = LayoutInflater.from(this);
 
-        page.delegate = this;
-        page.execute(getString(R.string.URL_FRONT));
+        PageContents articles = new PageContents(this);
+        articles.execute("articles", getString(R.string.URL_FRONT));
+
+        PageContents sections = new PageContents(this);
+        sections.execute("sections", getString(R.string.URL_SECTIONS));
 
         Rect scrollBounds = new Rect();
         ScrollView scrollView = (ScrollView) this.findViewById(R.id.scroll_container);
@@ -50,13 +55,44 @@ public class Home extends CustomActivity implements AsyncResponse {
         }
     }
 
-    @Override
-    public void processFinish(String result) {
+    private void addSections(String result) {
+        try {
+            json = new JSONArray(result.trim());
+        } catch (Exception e) {
+            Log.e(TAG, "Could not parse sections JSON.");
+        }
+
+        // Loop through results
+        for (int i = 0; i < json.length(); i++) {
+
+            try {
+                LinearLayout drawer = (LinearLayout) findViewById(R.id.drawer_container);
+
+                JSONObject sectionInfo = json.getJSONObject(i);
+                Button sectionButton = (Button) inflater.inflate(R.layout.drawer_button, drawer, false);
+                sectionButton.setText(sectionInfo.getString("name"));
+                String sectionColor = sectionInfo.getString("color");
+                if (!sectionColor.startsWith("#")) {
+                    sectionColor = "#" + sectionColor;
+                }
+
+                sectionButton.setBackgroundColor(Color.parseColor(sectionColor));
+
+                drawer.addView(sectionButton);
+
+            } catch (Exception e) {
+                Log.w("sdfasdf", "couldnt add button");
+            }
+
+        }
+    }
+
+    private void addArticles(String result) {
 
         try {
             json = new JSONArray(result.trim());
         } catch (Exception e) {
-            Log.e(TAG, "Could not parse JSON.");
+            Log.e(TAG, "Could not parse articles JSON.");
         }
 
         // Loop through results
@@ -104,7 +140,6 @@ public class Home extends CustomActivity implements AsyncResponse {
 
                 // Add the Image
                 if (!nodeImage.isEmpty() && !nodeImage.equals("[]")) {
-                    Log.e("REPORTER", "Image: " + nodeImage);
                     try {
                         ImageView articleThumbnail = (ImageView) articleContainer.findViewById(R.id.abstract_image);
                         articleThumbnail.setOnClickListener(new onArticleClickListener(article.getInt("nid"), this));
@@ -125,6 +160,17 @@ public class Home extends CustomActivity implements AsyncResponse {
             }
 
         }
+    }
 
+    public void processFinish(List<String> result) {
+        try {
+            if (result.get(0).equals("articles")) {
+                addArticles(result.get(1));
+            } else {
+                addSections(result.get(1));
+            }
+        } catch (Exception e) {
+            Log.i("REPORTER", "Unknown page contents received.");
+        }
     }
 }

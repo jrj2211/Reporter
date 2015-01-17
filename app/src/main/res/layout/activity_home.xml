@@ -37,14 +37,28 @@
     </RelativeLayout>
 
     <!-- The navigation drawer -->
-    <ListView
-        android:id="@+id/left_drawer"
+    <ScrollView
+        android:id="@+id/drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:choiceMode="singleChoice"
         android:divider="#252525"
         android:dividerHeight="0dp"
-        android:background="#202020" />
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="#202020">
+
+        <LinearLayout
+            android:id="@+id/drawer_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </android.support.v4.widget.DrawerLayout>
