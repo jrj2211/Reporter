@@ -9,7 +9,6 @@
     <string name="action_settings">Settings</string>
 
     <string name="URL">http://reporter.rit.edu/api/</string>
-    <string name="URL_FRONT">http://reporter.rit.edu/api/home-mobile.json</string>
     <string name="URL_SECTIONS">http://reporter.rit.edu/api/sections.json</string>
     <string name="URL_ARTICLE">http://reporter.rit.edu/api/article/</string>
 </resources>

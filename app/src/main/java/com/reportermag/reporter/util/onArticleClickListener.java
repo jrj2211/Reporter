@@ -1,10 +1,7 @@
 package com.reportermag.reporter.util;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.view.View;
-
-import com.reportermag.reporter.Article;
 
 public class onArticleClickListener implements View.OnClickListener {
 
@@ -18,9 +15,11 @@ public class onArticleClickListener implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(this.activity, Article.class);
-        intent.putExtra("id", this.nodeid);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        this.activity.startActivity(intent);
+
+
+        //Intent intent = new Intent(this.activity, Article.class);
+        //intent.putExtra("id", this.nodeid);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        //this.activity.startActivity(intent);
     }
 }

@@ -10,10 +10,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-public class PageContents extends AsyncTask<String, Void, List<String>> {
+public class PageContents extends AsyncTask<String, Void, String> {
 
     private AsyncResponse delegate = null;
     private static final int STATUS_OK = 200;
@@ -23,21 +21,20 @@ public class PageContents extends AsyncTask<String, Void, List<String>> {
     }
 
     @Override
-    protected List<String> doInBackground(String... urls) {
+    protected String doInBackground(String... urls) {
 
-        List<String> data = new ArrayList<>();
-        data.add(0, urls[0]);
+        String data = null;
 
         try {
             HttpClient client = new DefaultHttpClient();
-            HttpGet request = new HttpGet(urls[1]);
+            HttpGet request = new HttpGet(urls[0]);
             HttpResponse response = client.execute(request);
 
             HttpEntity entity = response.getEntity();
 
             int status = response.getStatusLine().getStatusCode();
             if (STATUS_OK == status) {
-                data.add(1, EntityUtils.toString(entity));
+                data = EntityUtils.toString(entity);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -46,7 +43,7 @@ public class PageContents extends AsyncTask<String, Void, List<String>> {
         return data;
     }
 
-    protected void onPostExecute(List<String> result) {
+    protected void onPostExecute(String result) {
         super.onPostExecute(result);
         delegate.processFinish(result);
     }

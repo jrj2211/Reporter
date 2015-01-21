@@ -1,21 +1,19 @@
-package com.reportermag.reporter;
+package com.reportermag.reporter.fragments;
 
-import android.app.Activity;
+import android.app.Fragment;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.reportermag.reporter.R;
 import com.reportermag.reporter.util.AsyncResponse;
 import com.reportermag.reporter.util.DownloadImageTask;
 import com.reportermag.reporter.util.PageContents;
@@ -26,101 +24,39 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 
-public class Home extends CustomActivity implements AsyncResponse {
+public class SectionFragment extends Fragment implements AsyncResponse {
 
-    private static final String TAG = "Home";
+    private final String TAG = "SectionFragment";
     private JSONArray json;
-    private LinearLayout articles;
     private LayoutInflater inflater;
-    private Activity activity;
+    private LinearLayout sectionContainer;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        activity = this;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        setContentView(R.layout.activity_home);
+        String section = "home";
 
-        articles = (LinearLayout) findViewById(R.id.articles);
-        inflater = LayoutInflater.from(this);
-
-        PageContents articles = new PageContents(this);
-        articles.execute("articles", getString(R.string.URL_FRONT));
-
-        PageContents sections = new PageContents(this);
-        sections.execute("sections", getString(R.string.URL_SECTIONS));
-
-        Rect scrollBounds = new Rect();
-        ScrollView scrollView = (ScrollView) this.findViewById(R.id.scroll_container);
-        LinearLayout loadMoreView = (LinearLayout) this.findViewById(R.id.load_more_articles);
-        scrollView.getHitRect(scrollBounds);
-        if (loadMoreView.getLocalVisibleRect(scrollBounds)) {
-            Log.i(TAG, "Loading more articles...");
+        // Get Arguments
+        Bundle bundle = this.getArguments();
+        if (!bundle.getString("section").isEmpty()) {
+            section = bundle.getString("section");
         }
+
+        // Load the page contents
+        PageContents downloadPage = new PageContents(this);
+        downloadPage.execute(getString(R.string.URL) + section + "-mobile.json");
+
+        sectionContainer = (LinearLayout) inflater.inflate(R.layout.fragment_section, container, false);
+
+        this.inflater = inflater;
+
+        return sectionContainer;
     }
 
-    private void addSections(String result) {
-        try {
-            json = new JSONArray(result.trim());
-        } catch (Exception e) {
-            Log.e(TAG, "Could not parse sections JSON.");
-        }
-
-        // Loop through results
-        for (int i = 0; i < json.length(); i++) {
-
-            try {
-                LinearLayout drawer = (LinearLayout) findViewById(R.id.drawer_container);
-
-                JSONObject sectionInfo = json.getJSONObject(i);
-                Button sectionButton = (Button) inflater.inflate(R.layout.drawer_button, drawer, false);
-                sectionButton.setText(sectionInfo.getString("name"));
-                String sectionColor = sectionInfo.getString("color");
-                if (!sectionColor.startsWith("#")) {
-                    sectionColor = "#" + sectionColor;
-                }
-
-                sectionButton.setOnClickListener(new View.OnClickListener() {
-
-                    public void onClick(View v) {
-                        articles.removeAllViews();
-
-                        Button b = (Button) v;
-
-                        String text = b.getText().toString().toLowerCase();
-
-                        TextView loading = new TextView(activity);
-                        loading.setText("Loading articles...");
-                        articles.addView(loading);
-
-                        PageContents articles = new PageContents((AsyncResponse) activity);
-                        articles.execute("articles", getString(R.string.URL) + text + "-mobile.json");
-
-                        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-                        View drawer = findViewById(R.id.drawer);
-                        drawerLayout.closeDrawer(drawer);
-                    }
-
-                });
-
-                sectionButton.setBackgroundColor(Color.parseColor(sectionColor));
-
-                drawer.addView(sectionButton);
-
-            } catch (Exception e) {
-                Log.e(TAG, "Couldn't add section button to drawer.");
-            }
-
-        }
-    }
-
-    private void addArticles(String result) {
-
-        // Remove all previous
-        articles.removeAllViews();
+    @Override
+    public void processFinish(String result) {
 
         try {
             json = new JSONArray(result.trim());
@@ -145,13 +81,13 @@ public class Home extends CustomActivity implements AsyncResponse {
             }
 
             // Create article container
-            LinearLayout articleContainer = (LinearLayout) inflater.inflate(R.layout.article_abstract, articles, false);
-            articles.addView(articleContainer);
+            LinearLayout articleContainer = (LinearLayout) inflater.inflate(R.layout.article_abstract, sectionContainer, false);
+            sectionContainer.addView(articleContainer);
 
             // Add the Title
             try {
                 TextView articleTitle = (TextView) articleContainer.findViewById(R.id.abstract_title);
-                articleTitle.setOnClickListener(new onArticleClickListener(nodeID, this));
+                articleTitle.setOnClickListener(new onArticleClickListener(1, getActivity()));
                 articleTitle.setText(article.getString("node_title"));
             } catch (Exception e) {
                 Log.e(TAG, "Could not get title for article id " + Integer.toString(nodeID));
@@ -182,7 +118,7 @@ public class Home extends CustomActivity implements AsyncResponse {
                 String nodeImage = article.getString("imgLink");
                 if (!nodeImage.isEmpty() && !nodeImage.equals("[]")) {
                     ImageView articleThumbnail = (ImageView) articleContainer.findViewById(R.id.abstract_image);
-                    articleThumbnail.setOnClickListener(new onArticleClickListener(article.getInt("nid"), this));
+                    articleThumbnail.setOnClickListener(new onArticleClickListener(1, getActivity()));
                     new DownloadImageTask(articleThumbnail).execute(nodeImage);
                     articleThumbnail.setAdjustViewBounds(true);
                     articleThumbnail.setVisibility(ImageView.VISIBLE);
@@ -214,18 +150,6 @@ public class Home extends CustomActivity implements AsyncResponse {
             } catch (Exception e) {
                 Log.e(TAG, "Could not get section for article id " + Integer.toString(nodeID));
             }
-        }
-    }
-
-    public void processFinish(List<String> result) {
-        try {
-            if (result.get(0).equals("articles")) {
-                addArticles(result.get(1));
-            } else {
-                addSections(result.get(1));
-            }
-        } catch (Exception e) {
-            Log.i("REPORTER", "Unknown page contents received.");
         }
     }
 }

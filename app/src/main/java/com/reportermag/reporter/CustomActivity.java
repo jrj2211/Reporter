@@ -18,6 +18,7 @@ public class CustomActivity extends Activity {
     private boolean searchActivated = false;
     protected LinearLayout titlebar;
     protected static Typeface OpenSansBold;
+    protected Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,7 @@ public class CustomActivity extends Activity {
         this.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
 
         titlebar = (LinearLayout) findViewById(R.id.header);
+        activity = this;
 
         OpenSansBold = Typeface.createFromAsset(this.getAssets(), "fonts/OpenSans-Bold.ttf");
 
