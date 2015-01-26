@@ -20,7 +20,7 @@
             android:layout_marginLeft="10dp"
             android:layout_gravity="center" />
 
-        <ScrollView
+        <com.reportermag.reporter.util.ObservableScrollView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingRight="5dp"
@@ -36,14 +36,7 @@
 
             </FrameLayout>
 
-        </ScrollView>
-
-        <LinearLayout
-            android:layout_below="@+id/scroll_container"
-            android:id="@+id/end_of_page"
-            android:layout_width="fill_parent"
-            android:layout_height="10dp"
-            android:orientation="vertical"></LinearLayout>
+        </com.reportermag.reporter.util.ObservableScrollView>
 
     </RelativeLayout>
 

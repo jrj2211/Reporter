@@ -13,8 +13,8 @@ import java.io.IOException;
 
 public class PageContents extends AsyncTask<String, Void, String> {
 
-    private AsyncResponse delegate = null;
     private static final int STATUS_OK = 200;
+    private AsyncResponse delegate = null;
 
     public PageContents(AsyncResponse context) {
         delegate = context;

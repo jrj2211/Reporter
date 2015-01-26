@@ -18,25 +18,29 @@ import com.reportermag.reporter.util.PageContents;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class Main extends CustomActivity implements AsyncResponse {
 
     private static final String TAG = "Main";
     private JSONArray json;
-    private LinearLayout articles;
     private LayoutInflater inflater;
-    private LinearLayout fragContainer;
+    private Map<Integer, Fragment> sections;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sections = new HashMap<>();
+
         // Store the inflater
         inflater = LayoutInflater.from(this);
 
         // Load the default section
-        loadSectionFragment("home");
+        loadSectionFragment(0, false);
 
         // Download the sections for the drawer
         PageContents sections = new PageContents(this);
@@ -51,72 +55,85 @@ public class Main extends CustomActivity implements AsyncResponse {
         }
 
         // Loop through results
-        for (int i = 0; i < json.length(); i++) {
-
-            try {
-                LinearLayout drawer = (LinearLayout) findViewById(R.id.drawer_container);
-
-                JSONObject sectionInfo = json.getJSONObject(i);
-                Button sectionButton = (Button) inflater.inflate(R.layout.drawer_button, drawer, false);
-                sectionButton.setText(sectionInfo.getString("name").toUpperCase());
-
-                String sectionColor = sectionInfo.getString("color");
-                if (!sectionColor.startsWith("#")) {
-                    sectionColor = "#" + sectionColor;
-                }
+        if (json != null) {
+            for (int i = 0; i < json.length(); i++) {
 
                 try {
-                    Color.parseColor(sectionColor);
-                    sectionButton.setTextColor(Color.parseColor(sectionColor));
-                } catch (Exception e) {
-                }
+                    LinearLayout drawer = (LinearLayout) findViewById(R.id.drawer_container);
 
-                sectionButton.setOnClickListener(new View.OnClickListener() {
+                    JSONObject sectionInfo = json.getJSONObject(i);
+                    Button sectionButton = (Button) inflater.inflate(R.layout.drawer_button, drawer, false);
+                    sectionButton.setText(sectionInfo.getString("name").toUpperCase());
 
-                    public void onClick(View v) {
-
-                        // Get button Pressed
-                        Button selected = (Button) v;
-                        String section = selected.getText().toString().toLowerCase();
-
-                        // Load the section
-                        loadSectionFragment(section);
-
-                        // Close the drawer
-                        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-                        View drawer = findViewById(R.id.drawer);
-                        drawerLayout.closeDrawer(drawer);
+                    try {
+                        sectionButton.setTag(Integer.parseInt(sectionInfo.getString("id")));
+                    } catch (Exception e) {
+                        sectionButton.setTag(0);
                     }
 
-                });
+                    String sectionColor = sectionInfo.getString("color");
+                    if (!sectionColor.startsWith("#")) {
+                        sectionColor = "#" + sectionColor;
+                    }
 
-                drawer.addView(sectionButton);
+                    try {
+                        Color.parseColor(sectionColor);
+                        sectionButton.setTextColor(Color.parseColor(sectionColor));
+                    } catch (Exception e) {
+                        sectionButton.setTextColor(Color.parseColor("#ffffff"));
+                    }
 
-            } catch (Exception e) {
-                Log.e(TAG, "Couldn't add section button to drawer.");
+                    sectionButton.setOnClickListener(new View.OnClickListener() {
+
+                        public void onClick(View v) {
+
+                            // Get button Pressed
+                            Integer section = (Integer) v.getTag();
+
+                            // Load the section
+                            loadSectionFragment(section, true);
+
+                            // Close the drawer
+                            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+                            View drawer = findViewById(R.id.drawer);
+                            drawerLayout.closeDrawer(drawer);
+                        }
+
+                    });
+
+                    drawer.addView(sectionButton);
+
+                } catch (Exception e) {
+                    Log.e(TAG, "Couldn't add section button to drawer.");
+                }
+
             }
-
         }
     }
 
-    public void loadSectionFragment(String section) {
-        loadSectionFragment(section, true);
-    }
-
-    public void loadSectionFragment(String section, boolean backstack) {
+    public void loadSectionFragment(Integer sectionID, boolean backstack) {
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         // Set the arguments
         Bundle bundle = new Bundle();
-        bundle.putString("section", section);
+        bundle.putInt("section", sectionID);
 
         // Add the section fragment
-        Fragment sectionFrag = new SectionFragment();
-        sectionFrag.setArguments(bundle);
+        Fragment sectionFrag = sections.get(sectionID);
+        if (sectionFrag == null) {
+            sectionFrag = new SectionFragment();
+            sectionFrag.setArguments(bundle);
+            sections.put(sectionID, sectionFrag);
+        }
+
+        transaction.setCustomAnimations(R.animator.enter_anim, R.animator.exit_anim);
 
         transaction.replace(R.id.fragment_container, sectionFrag);
-        transaction.addToBackStack(null);
+
+        if (backstack) {
+            transaction.addToBackStack(null);
+        }
 
         // Commit the new fragment
         transaction.commit();

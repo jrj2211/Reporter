@@ -25,7 +25,7 @@ public class CustomActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         this.requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-        setContentView(R.layout.activity_article);
+        setContentView(R.layout.fragment_article);
         this.getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_bar);
 
         titlebar = (LinearLayout) findViewById(R.id.header);
