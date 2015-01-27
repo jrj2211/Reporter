@@ -4,13 +4,12 @@
     android:layout_height="match_parent">
 
     <!-- The main content view -->
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff"
-        tools:context="com.reportermag.reporter.Main">
+        android:background="#ffffff">
 
+        <!-- Spinner -->
         <ProgressBar
             android:id="@+id/loading"
             android:layout_width="fill_parent"
@@ -18,8 +17,10 @@
             android:indeterminate="true"
             android:padding="20dp"
             android:layout_marginLeft="10dp"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
+        <!-- Where the fragments go -->
         <com.reportermag.reporter.util.ObservableScrollView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -38,7 +39,53 @@
 
         </com.reportermag.reporter.util.ObservableScrollView>
 
-    </RelativeLayout>
+        <!-- Search options views -->
+        <LinearLayout
+            android:id="@+id/search_options"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:background="#dcdcdc"
+            android:layout_gravity="top"
+            android:padding="7dp"
+            android:clickable="true"
+            android:visibility="gone" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="15dp"
+                android:textColor="#151515"
+                android:gravity="center_vertical"
+                android:layout_weight=".50"
+                android:text="Search For: "
+                android:fontFamily="sans-serif"/>
+
+            <Button
+                android:id="@+id/search_articles_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="#151515"
+                android:textColor="@android:color/white"
+                android:textSize="15dp"
+                android:padding="5dp"
+                android:text="Articles"
+                android:fontFamily="sans-serif" />
+
+            <Button
+                android:id="@+id/search_authors_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="15dp"
+                android:textColor="#151515"
+                android:padding="5dp"
+                android:text="Authors"
+                android:fontFamily="sans-serif"
+                android:background="#c0c0c0" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
     <!-- The navigation drawer -->
     <ScrollView

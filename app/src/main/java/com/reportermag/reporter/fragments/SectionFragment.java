@@ -73,6 +73,8 @@ public class SectionFragment extends Fragment implements AsyncResponse, ScrollVi
     @Override
     public void processFinish(String result) {
 
+        getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+
         // Unset loading
         loading = false;
 
@@ -191,6 +193,8 @@ public class SectionFragment extends Fragment implements AsyncResponse, ScrollVi
     }
 
     public void loadArticleFragment(int nodeID, String color) {
+
+        getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 

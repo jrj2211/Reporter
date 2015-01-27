@@ -10,6 +10,7 @@
 
     <string name="URL">http://reporter.rit.edu/api/</string>
     <string name="URL_SECTION">http://reporter.rit.edu/api/section.json</string>
+    <string name="URL_SEARCH">http://reporter.rit.edu/api/search.json</string>
     <string name="URL_SECTIONS">http://reporter.rit.edu/api/sections.json</string>
     <string name="URL_ARTICLE">http://reporter.rit.edu/api/article/</string>
 </resources>

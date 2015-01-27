@@ -61,6 +61,7 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
     @Override
     public void processFinish(String result) {
 
+        getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
         articleContainer.setVisibility(LinearLayout.VISIBLE);
 
         Integer mainColor = 0;
