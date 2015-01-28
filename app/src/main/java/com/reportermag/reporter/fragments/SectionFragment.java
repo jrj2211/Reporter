@@ -61,13 +61,14 @@ public class SectionFragment extends Fragment implements AsyncResponse, ScrollVi
         colorFade.start();
 
         // Get the container
-        sectionContainer = (LinearLayout) inflater.inflate(R.layout.fragment_section, container, false);
-
-        ((ObservableScrollView) getActivity().findViewById(R.id.scroll_container)).setScrollViewListener(this);
+        ObservableScrollView scrollContainer = (ObservableScrollView) inflater.inflate(R.layout.fragment_section, container, false);
+        scrollContainer.setScrollViewListener(this);
 
         this.inflater = inflater;
 
-        return sectionContainer;
+        sectionContainer = (LinearLayout) scrollContainer.findViewById(R.id.section_articles);
+
+        return scrollContainer;
     }
 
     @Override

@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.reportermag.reporter.R;
 import com.reportermag.reporter.util.AsyncResponse;
 import com.reportermag.reporter.util.DownloadImageTask;
+import com.reportermag.reporter.util.ObservableScrollView;
 import com.reportermag.reporter.util.PageContents;
 
 import org.json.JSONArray;
@@ -67,7 +68,9 @@ public class SearchFragment extends Fragment implements AsyncResponse {
         searchField.setText("");
 
         // Get the container
-        searchContainer = (LinearLayout) inflater.inflate(R.layout.fragment_search, container, false);
+        ObservableScrollView scrollContainer = (ObservableScrollView) inflater.inflate(R.layout.fragment_search, container, false);
+
+        searchContainer = (LinearLayout) scrollContainer.findViewById(R.id.search);
 
         searchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -142,7 +145,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
 
         this.inflater = inflater;
 
-        return searchContainer;
+        return scrollContainer;
     }
 
     public void onStop() {

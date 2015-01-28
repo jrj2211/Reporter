@@ -21,73 +21,14 @@
             android:visibility="gone" />
 
         <!-- Where the fragments go -->
-        <com.reportermag.reporter.util.ObservableScrollView
+        <FrameLayout
+            android:id="@+id/fragment_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingRight="5dp"
-            android:id="@+id/scroll_container">
+            android:orientation="vertical"
+            android:background="#ffffff">
 
-            <FrameLayout
-                android:id="@+id/fragment_container"
-                android:layout_marginRight="10dp"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:orientation="vertical"
-                android:background="#ffffff">
-
-            </FrameLayout>
-
-        </com.reportermag.reporter.util.ObservableScrollView>
-
-        <!-- Search options views -->
-        <LinearLayout
-            android:id="@+id/search_options"
-            android:layout_width="fill_parent"
-            android:layout_height="50dp"
-            android:orientation="horizontal"
-            android:background="#dcdcdc"
-            android:layout_gravity="top"
-            android:padding="7dp"
-            android:clickable="true"
-            android:visibility="gone" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textSize="15dp"
-                android:textColor="#151515"
-                android:gravity="center_vertical"
-                android:layout_weight=".50"
-                android:text="Search For: "
-                android:fontFamily="sans-serif"/>
-
-            <Button
-                android:id="@+id/search_articles_button"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="#151515"
-                android:textColor="@android:color/white"
-                android:textSize="15dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:gravity="center"
-                android:text="Articles"
-                android:fontFamily="sans-serif" />
-
-            <Button
-                android:id="@+id/search_authors_button"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textSize="15dp"
-                android:textColor="#151515"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:gravity="center"
-                android:text="Authors"
-                android:fontFamily="sans-serif"
-                android:background="#c0c0c0" />
-
-        </LinearLayout>
+        </FrameLayout>
 
     </FrameLayout>
 

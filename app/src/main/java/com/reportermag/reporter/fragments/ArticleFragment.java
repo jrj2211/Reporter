@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.reportermag.reporter.R;
 import com.reportermag.reporter.util.AsyncResponse;
 import com.reportermag.reporter.util.DownloadImageTask;
+import com.reportermag.reporter.util.ObservableScrollView;
 import com.reportermag.reporter.util.PageContents;
 
 import org.json.JSONArray;
@@ -30,7 +31,7 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
 
     private final String TAG = "ArticleFragment";
     private Integer nodeID;
-    private LinearLayout articleContainer;
+    private ObservableScrollView scrollContainer;
     private LinearLayout bodyContainer;
     private View currentView;
     private SpannableStringBuilder buffer;
@@ -49,20 +50,20 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
             downloadPage.execute(getString(R.string.URL_ARTICLE) + Integer.toString(nodeID) + ".json");
         }
 
-        // Make the container
-        articleContainer = (LinearLayout) inflater.inflate(R.layout.fragment_article, container, false);
-        articleContainer.setVisibility(LinearLayout.GONE);
+        // Get the container
+        scrollContainer = (ObservableScrollView) inflater.inflate(R.layout.fragment_article, container, false);
+        scrollContainer.setVisibility(LinearLayout.GONE);
 
-        bodyContainer = (LinearLayout) articleContainer.findViewById(R.id.article_body);
+        bodyContainer = (LinearLayout) scrollContainer.findViewById(R.id.article_body);
 
-        return articleContainer;
+        return scrollContainer;
     }
 
     @Override
     public void processFinish(String result) {
 
         getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
-        articleContainer.setVisibility(LinearLayout.VISIBLE);
+        scrollContainer.setVisibility(LinearLayout.VISIBLE);
 
         Integer mainColor = 0;
         String author = null;

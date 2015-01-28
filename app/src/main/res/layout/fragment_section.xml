@@ -1,7 +1,17 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/section_articles"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
+<com.reportermag.reporter.util.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:paddingRight="10dp"
+android:layout_marginRight="5dp"
+android:scrollbarStyle="outsideOverlay"
+android:id="@+id/scroll_container">
 
-</LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/section_articles"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+</com.reportermag.reporter.util.ObservableScrollView>

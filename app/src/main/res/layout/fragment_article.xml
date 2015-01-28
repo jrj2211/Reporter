@@ -1,42 +1,52 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/article"
+<com.reportermag.reporter.util.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_marginLeft="15dp"
-    android:paddingTop="10dp"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/article_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#151515"
-        android:textSize="18dp"
-        android:textStyle="bold"
-        android:paddingBottom="5dp" />
-
-    <TextView
-        android:id="@+id/article_byline"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/border_bottom"
-        android:paddingBottom="10dp"
-        android:textSize="13dp" />
-
-    <ImageView
-        android:id="@+id/article_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    android:layout_height="wrap_content"
+    android:paddingRight="10dp"
+    android:layout_marginRight="5dp"
+    android:scrollbarStyle="outsideOverlay"
+    android:id="@+id/scroll_container">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/article_body"
+        android:id="@+id/article"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border_bottom"
-        android:paddingBottom="10dp"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="15dp"
+        android:paddingTop="10dp"
         android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/article_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#151515"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:paddingBottom="5dp" />
+
+        <TextView
+            android:id="@+id/article_byline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/border_bottom"
+            android:paddingBottom="10dp"
+            android:textSize="13dp" />
+
+        <ImageView
+            android:id="@+id/article_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/article_body"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bottom"
+            android:paddingBottom="10dp"
+            android:orientation="vertical">
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</com.reportermag.reporter.util.ObservableScrollView>

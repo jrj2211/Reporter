@@ -52,7 +52,6 @@ public class CustomActivity extends Activity {
                 LinearLayout searchOptions = (LinearLayout) findViewById(R.id.search_options);
 
                 // Add the search fields
-                searchOptions.setVisibility(View.VISIBLE);
                 searchField.setVisibility(View.VISIBLE);
                 searchField.requestFocus();
 
