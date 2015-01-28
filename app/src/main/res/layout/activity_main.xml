@@ -68,7 +68,9 @@
                 android:background="#151515"
                 android:textColor="@android:color/white"
                 android:textSize="15dp"
-                android:padding="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:gravity="center"
                 android:text="Articles"
                 android:fontFamily="sans-serif" />
 
@@ -78,7 +80,9 @@
                 android:layout_height="match_parent"
                 android:textSize="15dp"
                 android:textColor="#151515"
-                android:padding="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:gravity="center"
                 android:text="Authors"
                 android:fontFamily="sans-serif"
                 android:background="#c0c0c0" />

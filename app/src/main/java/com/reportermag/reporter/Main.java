@@ -45,34 +45,6 @@ public class Main extends CustomActivity implements AsyncResponse {
         // Download the sections for the drawer
         PageContents sections = new PageContents(this);
         sections.execute(getString(R.string.URL_SECTIONS));
-
-        findViewById(R.id.search_articles_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Button articles = (Button) v;
-                Button authors = (Button) findViewById(R.id.search_authors_button);
-
-                articles.setTextColor(Color.parseColor("#ffffff"));
-                articles.setBackgroundColor(getResources().getColor(R.color.graydark));
-
-                authors.setTextColor(Color.parseColor("#151515"));
-                authors.setBackgroundColor(getResources().getColor(R.color.graylight));
-            }
-        });
-
-        findViewById(R.id.search_authors_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Button authors = (Button) v;
-                Button articles = (Button) findViewById(R.id.search_articles_button);
-
-                authors.setTextColor(Color.parseColor("#ffffff"));
-                authors.setBackgroundColor(getResources().getColor(R.color.graydark));
-
-                articles.setTextColor(Color.parseColor("#151515"));
-                articles.setBackgroundColor(getResources().getColor(R.color.graylight));
-            }
-        });
     }
 
     public void processFinish(String result) {

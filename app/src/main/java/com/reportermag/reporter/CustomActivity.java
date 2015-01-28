@@ -2,22 +2,19 @@ package com.reportermag.reporter;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.reportermag.reporter.fragments.SearchFragment;
 
@@ -43,51 +40,36 @@ public class CustomActivity extends Activity {
         searchField.setVisibility(View.GONE);
 
         final ImageButton searchButton = (ImageButton) findViewById(R.id.header_search);
-        searchButton.setOnClickListener(new View.OnClickListener() {
+        final ImageButton moreButton = (ImageButton) findViewById(R.id.header_more);
+        final ImageButton backButton = (ImageButton) findViewById(R.id.header_back);
+        final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
-            final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        searchButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
-
                 LinearLayout searchOptions = (LinearLayout) findViewById(R.id.search_options);
 
-                if (searchActivated) {
-                    searchField.setVisibility(View.GONE);
-                    logoView.setVisibility(View.VISIBLE);
-                    searchOptions.setVisibility(View.GONE);
-                    searchActivated = false;
-                } else {
-                    searchOptions.setVisibility(View.VISIBLE);
-                    searchField.setVisibility(View.VISIBLE);
-                    searchField.requestFocus();
+                // Add the search fields
+                searchOptions.setVisibility(View.VISIBLE);
+                searchField.setVisibility(View.VISIBLE);
+                searchField.requestFocus();
 
-                    imm.showSoftInput(searchField, InputMethodManager.SHOW_IMPLICIT);
+                // Change visibility of buttons
+                moreButton.setVisibility(View.GONE);
+                backButton.setVisibility(View.VISIBLE);
+                searchButton.setVisibility(View.GONE);
 
-                    searchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                        @Override
-                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                                Log.w("sdaf","dsfdfs");
-                                imm.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
-                                searchField.setFocusable(false);
-                                searchField.setFocusable(true);
-                                return true;
-                            }
-                            return false;
-                        }
-                    });
+                imm.showSoftInput(searchField, InputMethodManager.SHOW_IMPLICIT);
 
-                    logoView.setVisibility(View.GONE);
-                    searchActivated = true;
+                logoView.setVisibility(View.GONE);
+                searchActivated = true;
 
-                    loadSearchFragment();
-                }
+                loadSearchFragment();
             }
         });
 
-        final ImageButton moreButton = (ImageButton) findViewById(R.id.header_more);
         moreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,6 +86,30 @@ public class CustomActivity extends Activity {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+            }
+        });
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Remove search fragment from backstack
+                FragmentManager manager = getFragmentManager();
+                manager.popBackStack();
+
+                if(searchActivated) {
+                    // Change visibility of views
+                    moreButton.setVisibility(View.VISIBLE);
+                    backButton.setVisibility(View.GONE);
+                    searchButton.setVisibility(View.VISIBLE);
+                    searchField.setVisibility(View.GONE);
+                    logoView.setVisibility(View.VISIBLE);
+
+                    searchActivated = false;
+
+                    // Remove keyboard
+                    imm.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
                 }
             }
         });

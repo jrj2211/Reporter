@@ -13,6 +13,15 @@
         android:layout_gravity="center"
         android:background="@drawable/highlight" />
 
+    <ImageButton
+        android:id="@+id/header_back"
+        android:src="@drawable/back"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:background="@drawable/highlight" />
+
     <ImageView
         android:id="@+id/logo"
         android:src="@drawable/logo"
@@ -30,7 +39,9 @@
         android:imeOptions="actionSearch"
         android:singleLine="true"
         android:textColor="#ffffff"
-        android:background="@null" />
+        android:background="@null"
+        android:hint="Enter search"
+        android:textColorHint="#757575" />
 
     <ImageButton
         android:id="@+id/header_search"
