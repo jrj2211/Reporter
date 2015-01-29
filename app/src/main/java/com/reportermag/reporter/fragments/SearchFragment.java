@@ -41,6 +41,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
     private JSONArray json;
     private LayoutInflater inflater;
     private LinearLayout searchContainer;
+    private LinearLayout bodyContainer;
     private LinearLayout titlebar;
     private Boolean loading = false;
     private Integer lastNode = null;
@@ -68,9 +69,9 @@ public class SearchFragment extends Fragment implements AsyncResponse {
         searchField.setText("");
 
         // Get the container
-        ObservableScrollView scrollContainer = (ObservableScrollView) inflater.inflate(R.layout.fragment_search, container, false);
+        searchContainer = (LinearLayout) inflater.inflate(R.layout.fragment_search, container, false);
 
-        searchContainer = (LinearLayout) scrollContainer.findViewById(R.id.search);
+        bodyContainer = (LinearLayout) searchContainer.findViewById(R.id.search);
 
         searchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -81,7 +82,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
 
                     getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
 
-                    searchContainer.removeAllViews();
+                    bodyContainer.removeAllViews();
 
                     // Load the page contents
                     PageContents downloadPage = new PageContents(activity);
@@ -99,11 +100,11 @@ public class SearchFragment extends Fragment implements AsyncResponse {
             }
         });
 
-        ((Button)getActivity().findViewById(R.id.search_articles_button)).setOnClickListener(new View.OnClickListener() {
+        ((Button)searchContainer.findViewById(R.id.search_articles_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!searchForArticles && !searchTerms.isEmpty()) {
-                    searchContainer.removeAllViews();
+                    bodyContainer.removeAllViews();
                     PageContents downloadPage = new PageContents(activity);
                     downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms);
                 }
@@ -121,11 +122,11 @@ public class SearchFragment extends Fragment implements AsyncResponse {
             }
         });
 
-        ((Button)getActivity().findViewById(R.id.search_authors_button)).setOnClickListener(new View.OnClickListener() {
+        ((Button)searchContainer.findViewById(R.id.search_authors_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(searchForArticles && !searchTerms.isEmpty()) {
-                    searchContainer.removeAllViews();
+                    bodyContainer.removeAllViews();
                     PageContents downloadPage = new PageContents(activity);
                     downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms + "&t=user");
                 }
@@ -145,12 +146,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
 
         this.inflater = inflater;
 
-        return scrollContainer;
-    }
-
-    public void onStop() {
-        super.onStop();
-        getActivity().findViewById(R.id.search_options).setVisibility(View.GONE);
+        return searchContainer;
     }
 
     @Override
@@ -190,7 +186,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
 
                     // Create article container
                     LinearLayout articleContainer = (LinearLayout) inflater.inflate(R.layout.article_abstract, searchContainer, false);
-                    searchContainer.addView(articleContainer);
+                    bodyContainer.addView(articleContainer);
 
                     // Add the section circle
                     try {
@@ -281,7 +277,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
                 noresults.setText("No results found.");
                 noresults.setTextColor(Color.parseColor("#151515"));
                 noresults.setTextSize(20);
-                searchContainer.addView(noresults);
+                bodyContainer.addView(noresults);
             }
         } else {
 
@@ -305,7 +301,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
 
                     // Create author container
                     LinearLayout authorContainer = (LinearLayout) inflater.inflate(R.layout.author_result, searchContainer, false);
-                    searchContainer.addView(authorContainer);
+                    bodyContainer.addView(authorContainer);
 
                     try {
                         ((TextView) authorContainer.findViewById(R.id.search_author)).setText(author.getString("fullname"));
@@ -319,7 +315,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
                 noresults.setText("No results found.");
                 noresults.setTextColor(Color.parseColor("#151515"));
                 noresults.setTextSize(20);
-                searchContainer.addView(noresults);
+                bodyContainer.addView(noresults);
             }
         }
     }

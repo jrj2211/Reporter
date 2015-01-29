@@ -36,7 +36,7 @@ public class CustomActivity extends Activity {
         activity = this;
 
         final ImageView logoView = (ImageView) findViewById(R.id.logo);
-        final EditText searchField = (EditText) findViewById(R.id.header_search_field);
+        EditText searchField = (EditText) findViewById(R.id.header_search_field);
         searchField.setVisibility(View.GONE);
 
         final ImageButton searchButton = (ImageButton) findViewById(R.id.header_search);
@@ -48,6 +48,8 @@ public class CustomActivity extends Activity {
 
             @Override
             public void onClick(View v) {
+
+                EditText searchField = (EditText) findViewById(R.id.header_search_field);
 
                 LinearLayout searchOptions = (LinearLayout) findViewById(R.id.search_options);
 
@@ -98,6 +100,10 @@ public class CustomActivity extends Activity {
                 manager.popBackStack();
 
                 if(searchActivated) {
+
+                    EditText searchField = (EditText) findViewById(R.id.header_search_field);
+                    searchField.setVisibility(View.GONE);
+
                     // Change visibility of views
                     moreButton.setVisibility(View.VISIBLE);
                     backButton.setVisibility(View.GONE);
@@ -122,8 +128,6 @@ public class CustomActivity extends Activity {
 
         // Add the section fragment
         Fragment searchFrag = new SearchFragment();
-
-        transaction.setCustomAnimations(R.animator.enter_anim, R.animator.exit_anim);
 
         transaction.replace(R.id.fragment_container, searchFrag);
 
