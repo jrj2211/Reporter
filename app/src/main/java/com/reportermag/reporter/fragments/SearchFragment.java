@@ -3,6 +3,7 @@ package com.reportermag.reporter.fragments;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -152,6 +153,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
     @Override
     public void processFinish(String result) {
         getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+        getActivity().findViewById(R.id.search_no_results).setVisibility(View.GONE);
 
         // Unset loading
         loading = false;
@@ -221,7 +223,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
                         articleTitle.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
                                 Map<String, Object> articleInfo = (HashMap<String, Object>) v.getTag();
-
+                                loadArticleFragment((Integer) articleInfo.get("id"), (String) articleInfo.get("color"));
                             }
                         });
                     } catch (Exception e) {
@@ -263,7 +265,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
                             articleThumbnail.setOnClickListener(new View.OnClickListener() {
                                 public void onClick(View v) {
                                     Map<String, Object> articleInfo = (HashMap<String, Object>) v.getTag();
-
+                                    loadArticleFragment((Integer) articleInfo.get("id"), (String) articleInfo.get("color"));
                                 }
                             });
                         }
@@ -273,11 +275,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
                 }
             } else {
                 // No Results
-                TextView noresults = new TextView(getActivity());
-                noresults.setText("No results found.");
-                noresults.setTextColor(Color.parseColor("#151515"));
-                noresults.setTextSize(20);
-                bodyContainer.addView(noresults);
+                getActivity().findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
             }
         } else {
 
@@ -311,12 +309,35 @@ public class SearchFragment extends Fragment implements AsyncResponse {
                 }
             } else {
                 // No Results
-                TextView noresults = new TextView(getActivity());
-                noresults.setText("No results found.");
-                noresults.setTextColor(Color.parseColor("#151515"));
-                noresults.setTextSize(20);
-                bodyContainer.addView(noresults);
+                getActivity().findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    public void loadArticleFragment(int nodeID, String color) {
+
+        getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        // Set the arguments
+        Bundle bundle = new Bundle();
+        bundle.putInt("id", nodeID);
+
+        // Add the article fragment
+        Fragment articleFrag = new ArticleFragment();
+        articleFrag.setArguments(bundle);
+
+        transaction.replace(R.id.fragment_container, articleFrag);
+        transaction.addToBackStack(null);
+
+        transaction.setCustomAnimations(R.animator.enter_anim, R.animator.exit_anim);
+
+        ObjectAnimator colorFade = ObjectAnimator.ofObject(titlebar, "backgroundColor", new ArgbEvaluator(), ((ColorDrawable) titlebar.getBackground()).getColor(), Color.parseColor(color));
+        colorFade.setDuration(300);
+        colorFade.start();
+
+        // Commit the new fragment
+        transaction.commit();
     }
 }

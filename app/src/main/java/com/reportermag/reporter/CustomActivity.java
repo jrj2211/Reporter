@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -42,7 +43,6 @@ public class CustomActivity extends Activity {
         final ImageButton searchButton = (ImageButton) findViewById(R.id.header_search);
         final ImageButton moreButton = (ImageButton) findViewById(R.id.header_more);
         final ImageButton backButton = (ImageButton) findViewById(R.id.header_back);
-        final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         searchButton.setOnClickListener(new View.OnClickListener() {
 
@@ -53,16 +53,14 @@ public class CustomActivity extends Activity {
 
                 LinearLayout searchOptions = (LinearLayout) findViewById(R.id.search_options);
 
-                // Add the search fields
-                searchField.setVisibility(View.VISIBLE);
-                searchField.requestFocus();
-
                 // Change visibility of buttons
                 moreButton.setVisibility(View.GONE);
                 backButton.setVisibility(View.VISIBLE);
                 searchButton.setVisibility(View.GONE);
+                searchField.setVisibility(View.VISIBLE);
+                searchField.requestFocus();
 
-                imm.showSoftInput(searchField, InputMethodManager.SHOW_IMPLICIT);
+                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(searchField, InputMethodManager.SHOW_IMPLICIT);
 
                 logoView.setVisibility(View.GONE);
                 searchActivated = true;
@@ -114,7 +112,7 @@ public class CustomActivity extends Activity {
                     searchActivated = false;
 
                     // Remove keyboard
-                    imm.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
+                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(searchField.getWindowToken(), 0);
                 }
             }
         });
