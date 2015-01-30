@@ -45,6 +45,16 @@ public class SectionFragment extends Fragment implements AsyncResponse, ScrollVi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        // Set titlebar visibility
+        getActivity().findViewById(R.id.header_more).setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.header_search).setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.logo).setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.header_back).setVisibility(View.GONE);
+        getActivity().findViewById(R.id.header_search_field).setVisibility(View.GONE);
+
+        // Clear Search
+        SearchFragment.clearSearch();
+
         // Get Arguments
         Bundle bundle = this.getArguments();
         sectionID = bundle.getInt("section");

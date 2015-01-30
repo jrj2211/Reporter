@@ -19,6 +19,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -47,14 +48,37 @@ public class SearchFragment extends Fragment implements AsyncResponse {
     private Boolean loading = false;
     private Integer lastNode = null;
     private AsyncResponse activity;
-    private Boolean searchForArticles = true;
-    private String searchTerms;
+    private static Boolean searchForArticles = true;
+    private static String searchTerms;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         activity = this;
-        searchTerms = "";
+
+        // Load results if search terms exist
+        if(!searchTerms.isEmpty()) {
+            PageContents downloadPage = new PageContents(this);
+
+            if(searchForArticles) {
+                downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms);
+            } else {
+                downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms + "&t=user");
+            }
+        }
+
+        final EditText searchField = (EditText) getActivity().findViewById(R.id.header_search_field);
+        searchField.setText(searchTerms);
+
+        // Set visibility
+        getActivity().findViewById(R.id.header_more).setVisibility(View.GONE);
+        getActivity().findViewById(R.id.header_search).setVisibility(View.GONE);
+        getActivity().findViewById(R.id.logo).setVisibility(View.GONE);
+        getActivity().findViewById(R.id.header_back).setVisibility(View.VISIBLE);
+
+        searchField.setVisibility(View.VISIBLE);
+        searchField.requestFocus();
+        searchField.setSelection(searchField.getText().length());
 
         // Set the titlebar
         titlebar = (LinearLayout) getActivity().findViewById(R.id.header);
@@ -64,10 +88,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
 
         final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        // Set Listener
-        final EditText searchField = (EditText) getActivity().findViewById(R.id.header_search_field);
-
-        searchField.setText("");
+        ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(searchField, InputMethodManager.SHOW_IMPLICIT);
 
         // Get the container
         searchContainer = (LinearLayout) inflater.inflate(R.layout.fragment_search, container, false);
@@ -148,6 +169,12 @@ public class SearchFragment extends Fragment implements AsyncResponse {
         this.inflater = inflater;
 
         return searchContainer;
+    }
+
+    public void onStop() {
+        super.onStop();
+        EditText searchField = (EditText) getActivity().findViewById(R.id.header_search_field);
+        ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(searchField.getWindowToken(), 0);
     }
 
     @Override
@@ -339,5 +366,9 @@ public class SearchFragment extends Fragment implements AsyncResponse {
 
         // Commit the new fragment
         transaction.commit();
+    }
+
+    public static void clearSearch() {
+        searchTerms = "";
     }
 }

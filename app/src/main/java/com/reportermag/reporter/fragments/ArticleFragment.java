@@ -39,6 +39,13 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        // Set titlebar visibility
+        getActivity().findViewById(R.id.header_more).setVisibility(View.GONE);
+        getActivity().findViewById(R.id.header_search).setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.logo).setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.header_back).setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.header_search_field).setVisibility(View.GONE);
+
         // Get article to load
         Bundle arguments = this.getArguments();
         nodeID = arguments.getInt("id");
@@ -49,6 +56,9 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
             PageContents downloadPage = new PageContents(this);
             downloadPage.execute(getString(R.string.URL_ARTICLE) + Integer.toString(nodeID) + ".json");
         }
+        
+        // Hide search
+
 
         // Get the container
         scrollContainer = (ObservableScrollView) inflater.inflate(R.layout.fragment_article, container, false);

@@ -6,4 +6,4 @@
     android:textSize="16dp"
     android:gravity="center_vertical"
     android:fontFamily="sans-serif"
-    android:background="@drawable/border_bottom_dark" />
+    android:background="@drawable/drawer_button" />

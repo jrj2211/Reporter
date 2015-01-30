@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -21,7 +22,6 @@ import com.reportermag.reporter.fragments.SearchFragment;
 
 public class CustomActivity extends Activity {
 
-    private boolean searchActivated = false;
     protected LinearLayout titlebar;
     protected static Typeface OpenSansBold;
     protected Activity activity;
@@ -37,39 +37,17 @@ public class CustomActivity extends Activity {
         activity = this;
 
         final ImageView logoView = (ImageView) findViewById(R.id.logo);
-        EditText searchField = (EditText) findViewById(R.id.header_search_field);
-        searchField.setVisibility(View.GONE);
 
-        final ImageButton searchButton = (ImageButton) findViewById(R.id.header_search);
-        final ImageButton moreButton = (ImageButton) findViewById(R.id.header_more);
-        final ImageButton backButton = (ImageButton) findViewById(R.id.header_back);
 
-        searchButton.setOnClickListener(new View.OnClickListener() {
+        ((ImageButton) findViewById(R.id.header_search)).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
-                EditText searchField = (EditText) findViewById(R.id.header_search_field);
-
-                LinearLayout searchOptions = (LinearLayout) findViewById(R.id.search_options);
-
-                // Change visibility of buttons
-                moreButton.setVisibility(View.GONE);
-                backButton.setVisibility(View.VISIBLE);
-                searchButton.setVisibility(View.GONE);
-                searchField.setVisibility(View.VISIBLE);
-                searchField.requestFocus();
-
-                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(searchField, InputMethodManager.SHOW_IMPLICIT);
-
-                logoView.setVisibility(View.GONE);
-                searchActivated = true;
-
                 loadSearchFragment();
             }
         });
 
-        moreButton.setOnClickListener(new View.OnClickListener() {
+        ((ImageButton) findViewById(R.id.header_more)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -89,31 +67,13 @@ public class CustomActivity extends Activity {
             }
         });
 
-        backButton.setOnClickListener(new View.OnClickListener() {
+        ((ImageButton) findViewById(R.id.header_back)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 // Remove search fragment from backstack
                 FragmentManager manager = getFragmentManager();
                 manager.popBackStack();
-
-                if(searchActivated) {
-
-                    EditText searchField = (EditText) findViewById(R.id.header_search_field);
-                    searchField.setVisibility(View.GONE);
-
-                    // Change visibility of views
-                    moreButton.setVisibility(View.VISIBLE);
-                    backButton.setVisibility(View.GONE);
-                    searchButton.setVisibility(View.VISIBLE);
-                    searchField.setVisibility(View.GONE);
-                    logoView.setVisibility(View.VISIBLE);
-
-                    searchActivated = false;
-
-                    // Remove keyboard
-                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(searchField.getWindowToken(), 0);
-                }
             }
         });
     }
