@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.reportermag.reporter.R;
+import com.reportermag.reporter.listeners.ArticleListener;
 import com.reportermag.reporter.util.AsyncResponse;
 import com.reportermag.reporter.util.DownloadImageTask;
 import com.reportermag.reporter.util.ObservableScrollView;
@@ -112,7 +113,7 @@ public class SectionFragment extends Fragment implements AsyncResponse, ScrollVi
                 continue;
             }
 
-            String nodeColor = "#151515";
+            Integer nodeColor = Color.parseColor("#151515");
 
             // Create article container
             LinearLayout articleContainer = (LinearLayout) inflater.inflate(R.layout.article_abstract, sectionContainer, false);
@@ -121,14 +122,14 @@ public class SectionFragment extends Fragment implements AsyncResponse, ScrollVi
             // Add the section circle
             try {
                 String nodeSection = Character.toString(article.getString("section_name").charAt(0));
-                nodeColor = article.getString("section_color");
+                nodeColor = Color.parseColor(article.getString("section_color"));
 
                 TextView articleSection = (TextView) articleContainer.findViewById(R.id.abstract_section);
 
                 if (!nodeSection.isEmpty()) {
                     articleSection.setText(nodeSection);
                     GradientDrawable bgShape = (GradientDrawable) articleSection.getBackground();
-                    bgShape.setColor(Color.parseColor(nodeColor));
+                    bgShape.setColor(nodeColor);
                 } else {
                     articleSection.setVisibility(TextView.GONE);
                 }
@@ -137,23 +138,11 @@ public class SectionFragment extends Fragment implements AsyncResponse, ScrollVi
                 Log.e(TAG, "Could not get section for article id " + Integer.toString(nodeID));
             }
 
-            Map<String, Object> articleInfo = new HashMap<>();
-            articleInfo.put("id", nodeID);
-            articleInfo.put("color", nodeColor);
-
             // Add the Title
             try {
                 TextView articleTitle = (TextView) articleContainer.findViewById(R.id.abstract_title);
-                articleTitle.setTag(articleInfo);
                 articleTitle.setText(article.getString("title"));
-
-                // Add the onclick listener
-                articleTitle.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        Map<String, Object> articleInfo = (HashMap<String, Object>) v.getTag();
-                        loadArticleFragment((Integer) articleInfo.get("id"), (String) articleInfo.get("color"));
-                    }
-                });
+                articleTitle.setOnClickListener(new ArticleListener(nodeID, nodeColor, getActivity()));
             } catch (Exception e) {
                 Log.e(TAG, "Could not get title for article id " + Integer.toString(nodeID));
             }
@@ -182,52 +171,17 @@ public class SectionFragment extends Fragment implements AsyncResponse, ScrollVi
                 String nodeImage = article.getString("imgLink");
                 if (!nodeImage.isEmpty() && !nodeImage.equals("[]")) {
                     ImageView articleThumbnail = (ImageView) articleContainer.findViewById(R.id.abstract_image);
-                    articleThumbnail.setTag(articleInfo);
                     articleThumbnail.setAdjustViewBounds(true);
                     articleThumbnail.setVisibility(ImageView.VISIBLE);
+                    articleThumbnail.setOnClickListener(new ArticleListener(nodeID, nodeColor, getActivity()));
 
                     // Download the image
                     new DownloadImageTask(articleThumbnail).execute(nodeImage);
-
-                    // Add the onclick listener
-                    articleThumbnail.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            Map<String, Object> articleInfo = (HashMap<String, Object>) v.getTag();
-                            loadArticleFragment((Integer) articleInfo.get("id"), (String) articleInfo.get("color"));
-                        }
-                    });
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Could not get image for article id " + Integer.toString(nodeID));
             }
         }
-    }
-
-    public void loadArticleFragment(int nodeID, String color) {
-
-        getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
-
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-        // Set the arguments
-        Bundle bundle = new Bundle();
-        bundle.putInt("id", nodeID);
-
-        // Add the article fragment
-        Fragment articleFrag = new ArticleFragment();
-        articleFrag.setArguments(bundle);
-
-        transaction.replace(R.id.fragment_container, articleFrag);
-        transaction.addToBackStack(null);
-
-        transaction.setCustomAnimations(R.animator.enter_anim, R.animator.exit_anim);
-
-        ObjectAnimator colorFade = ObjectAnimator.ofObject(titlebar, "backgroundColor", new ArgbEvaluator(), ((ColorDrawable) titlebar.getBackground()).getColor(), Color.parseColor(color));
-        colorFade.setDuration(300);
-        colorFade.start();
-
-        // Commit the new fragment
-        transaction.commit();
     }
 
     @Override

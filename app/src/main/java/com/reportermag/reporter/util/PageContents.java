@@ -1,6 +1,7 @@
 package com.reportermag.reporter.util;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -29,12 +30,13 @@ public class PageContents extends AsyncTask<String, Void, String> {
             HttpClient client = new DefaultHttpClient();
             HttpGet request = new HttpGet(urls[0]);
             HttpResponse response = client.execute(request);
-
+Log.e("PageContents", urls[0]);
             HttpEntity entity = response.getEntity();
 
             int status = response.getStatusLine().getStatusCode();
             if (STATUS_OK == status) {
                 data = EntityUtils.toString(entity);
+
             }
 
         } catch (IOException e) {

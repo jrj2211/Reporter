@@ -29,21 +29,19 @@
             android:id="@+id/search_articles_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="#151515"
-            android:textColor="@android:color/white"
             android:textSize="15dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:gravity="center"
             android:text="Articles"
-            android:fontFamily="sans-serif" />
+            android:fontFamily="sans-serif"
+            android:background="#c0c0c0"/>
 
         <Button
             android:id="@+id/search_authors_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textSize="15dp"
-            android:textColor="#151515"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:gravity="center"
