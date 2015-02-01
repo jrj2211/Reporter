@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -79,6 +80,11 @@ public class SearchFragment extends Fragment implements AsyncResponse {
         searchField.setVisibility(View.VISIBLE);
         searchField.requestFocus();
         searchField.setSelection(searchField.getText().length());
+
+        // Close the drawer
+        DrawerLayout drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+        View drawer = getActivity().findViewById(R.id.drawer);
+        drawerLayout.closeDrawer(drawer);
 
         // Set the titlebar
         titlebar = (LinearLayout) getActivity().findViewById(R.id.header);

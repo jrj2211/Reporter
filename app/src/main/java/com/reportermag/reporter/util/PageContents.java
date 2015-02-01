@@ -36,6 +36,7 @@ public class PageContents extends AsyncTask<String, Void, String> {
             if (STATUS_OK == status) {
                 data = EntityUtils.toString(entity);
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
