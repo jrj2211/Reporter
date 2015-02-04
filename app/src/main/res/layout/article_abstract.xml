@@ -2,63 +2,69 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/abstract_container"
-    android:background="@drawable/border_bottom"
-    android:paddingBottom="10dp"
-    android:layout_marginTop="10dp"
-    android:layout_marginLeft="15dp"
     android:orientation="vertical">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="10dp"
+        android:paddingBottom="15dp"
+        android:background="@drawable/border_bottom" >
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/abstract_section"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:background="@drawable/abstract_tab" />
+
+            <TextView
+                android:id="@+id/abstract_title"
+                android:layout_toRightOf="@+id/abstract_section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:includeFontPadding="false"
+                android:textColor="#151515"
+                android:textSize="18dp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/abstract_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:paddingTop="10dp" />
 
         <TextView
-            android:id="@+id/abstract_section"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginRight="10dp"
-            android:textSize="20dp"
-            android:gravity="center"
-            android:textColor="@android:color/white"
-            android:background="@drawable/abstract_tab" />
-
-        <TextView
-            android:id="@+id/abstract_title"
-            android:layout_toRightOf="@+id/abstract_section"
+            android:id="@+id/abstract_summary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:includeFontPadding="false"
             android:textColor="#151515"
-            android:textSize="18dp"
-            android:textStyle="bold" />
+            android:paddingTop="10dp"
+            android:textSize="15dp" />
 
-    </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/abstract_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:paddingTop="10dp" />
-
-    <TextView
-        android:id="@+id/abstract_summary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#151515"
-        android:paddingTop="10dp"
-        android:textSize="15dp" />
-
-    <TextView
-        android:id="@+id/abstract_byline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#aaaaaa"
-        android:layout_marginTop="15dp"
-        android:layout_gravity="right"
-        android:textSize="12dp" />
+        <TextView
+            android:id="@+id/abstract_byline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#aaaaaa"
+            android:layout_marginTop="15dp"
+            android:layout_gravity="right"
+            android:textSize="12dp" />
+    </LinearLayout>
 
 </LinearLayout>
 
