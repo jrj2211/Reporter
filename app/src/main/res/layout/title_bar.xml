@@ -2,53 +2,53 @@
     android:id="@+id/header"
     android:layout_width="fill_parent"
     android:layout_height="55dp"
-    android:orientation="horizontal"
-    android:background="#151515">
+    android:background="#151515"
+    android:orientation="horizontal">
 
     <ImageButton
         android:id="@+id/header_more"
-        android:src="@drawable/more"
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:layout_gravity="center"
-        android:background="@drawable/highlight" />
+        android:background="@drawable/highlight"
+        android:src="@drawable/more" />
 
     <ImageButton
         android:id="@+id/header_back"
-        android:src="@drawable/back"
         android:layout_width="55dp"
         android:layout_height="55dp"
-        android:visibility="gone"
         android:layout_gravity="center"
-        android:background="@drawable/highlight" />
+        android:background="@drawable/highlight"
+        android:src="@drawable/back"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/logo"
-        android:src="@drawable/logo"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="30dp"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:src="@drawable/logo" />
 
     <EditText
         android:id="@+id/header_search_field"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="20dp"
         android:layout_gravity="center"
+        android:layout_weight="1"
+        android:background="@null"
+        android:hint="Enter search"
         android:imeOptions="actionSearch"
         android:singleLine="true"
         android:textColor="#ffffff"
-        android:background="@null"
-        android:hint="Enter search"
         android:textColorHint="#757575" />
 
     <ImageButton
         android:id="@+id/header_search"
-        android:src="@drawable/search"
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:layout_gravity="center"
-        android:background="@drawable/highlight" />
+        android:background="@drawable/highlight"
+        android:src="@drawable/search" />
 
 </LinearLayout>

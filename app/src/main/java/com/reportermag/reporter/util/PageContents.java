@@ -30,7 +30,7 @@ public class PageContents extends AsyncTask<String, Void, String> {
             HttpClient client = new DefaultHttpClient();
             HttpGet request = new HttpGet(urls[0]);
             HttpResponse response = client.execute(request);
-Log.e("PageContents", urls[0]);
+            Log.e("PageContents", urls[0]);
             HttpEntity entity = response.getEntity();
 
             int status = response.getStatusLine().getStatusCode();

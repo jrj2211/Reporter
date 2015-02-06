@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.reportermag.reporter.R;
@@ -19,7 +18,6 @@ import com.reportermag.reporter.listeners.ArticleListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -28,22 +26,14 @@ import java.util.ArrayList;
  */
 public class ArticlesList extends ArrayAdapter<String> {
 
+    private static LayoutInflater inflater;
     private final Activity context;
     private final String TAG = "ArticlesList";
     private Integer lastNode = null;
     private ArrayList<JSONObject> articles;
-    private static LayoutInflater inflater;
-
-    static class ViewHolder {
-        public ImageView thumbnail;
-        public TextView title;
-        public TextView summary;
-        public TextView byline;
-        public TextView section;
-    }
 
     public ArticlesList(Activity context, ArrayList objects) {
-        super(context,R.layout.article_abstract, objects);
+        super(context, R.layout.article_abstract, objects);
 
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -54,8 +44,9 @@ public class ArticlesList extends ArrayAdapter<String> {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
+
         ViewHolder holder;
-        if(view == null) {
+        if (view == null) {
             view = inflater.inflate(R.layout.article_abstract, null, true);
             holder = new ViewHolder();
 
@@ -63,21 +54,22 @@ public class ArticlesList extends ArrayAdapter<String> {
             holder.summary = (TextView) view.findViewById(R.id.abstract_summary);
             holder.byline = (TextView) view.findViewById(R.id.abstract_byline);
             holder.section = (TextView) view.findViewById(R.id.abstract_section);
-            holder.thumbnail = (ImageView) view.findViewById(R.id.abstract_image);
+            holder.thumbnail = (ScrollImageView) view.findViewById(R.id.abstract_image);
+            holder.thumbnail.setVisibility(View.GONE);
 
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
+            holder.thumbnail.setVisibility(View.GONE);
         }
 
-        JSONObject article  = articles.get(position);
+        JSONObject article = articles.get(position);
 
         Integer nodeID = 0;
         Integer nodeColor = 0;
 
         try {
             nodeID = article.getInt("nid");
-            lastNode = nodeID;
             nodeColor = Color.parseColor("#151515");
         } catch (Exception e) {
             Log.e(TAG, "Could not get article node");
@@ -128,16 +120,21 @@ public class ArticlesList extends ArrayAdapter<String> {
         // Add the Image
         try {
             String nodeImage = article.getString("imgLink");
+            int nodeImageHeight = Integer.parseInt(article.getString("imgHeight"));
+            int nodeImageWidth = Integer.parseInt(article.getString("imgWidth"));
+
             if (!nodeImage.isEmpty() && !nodeImage.equals("[]")) {
-                holder.thumbnail.setAdjustViewBounds(true);
+                holder.thumbnail.setAdjustViewBounds(false);
                 holder.thumbnail.setVisibility(ImageView.VISIBLE);
                 holder.thumbnail.setOnClickListener(new ArticleListener(nodeID, nodeColor, context));
+                holder.thumbnail.setImageDrawable(null);
+                holder.thumbnail.setDimensions(nodeImageWidth, nodeImageHeight);
 
                 // Download the image
-                new DownloadImageTask(holder.thumbnail).execute(nodeImage);
+                holder.thumbnail.downloadImage(nodeImage);
+
             }
         } catch (Exception e) {
-            Log.e(TAG, "Could not get image for article id " + Integer.toString(nodeID));
         }
 
         return view;
@@ -156,13 +153,26 @@ public class ArticlesList extends ArrayAdapter<String> {
         // Loop through results
         for (int i = 0; i < json.length(); i++) {
             try {
-                articles.add(json.getJSONObject(i));
+                JSONObject obj = json.getJSONObject(i);
+                articles.add(obj);
+                lastNode = Integer.parseInt(obj.getString("nid"));
             } catch (Exception e) {
                 Log.e(TAG, "Couldn't get article object.");
             }
         }
 
         this.notifyDataSetChanged();
-        Log.i(TAG, "notified");
+    }
+
+    public int getLastNode() {
+        return lastNode;
+    }
+
+    static class ViewHolder {
+        public ScrollImageView thumbnail;
+        public TextView title;
+        public TextView summary;
+        public TextView byline;
+        public TextView section;
     }
 }

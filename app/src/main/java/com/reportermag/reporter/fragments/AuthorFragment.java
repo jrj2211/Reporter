@@ -1,38 +1,26 @@
 package com.reportermag.reporter.fragments;
 
 import android.app.Fragment;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.SpannableStringBuilder;
-import android.text.style.StyleSpan;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.reportermag.reporter.R;
 import com.reportermag.reporter.util.AsyncResponse;
-import com.reportermag.reporter.util.DownloadImageTask;
-import com.reportermag.reporter.util.ObservableScrollView;
 import com.reportermag.reporter.util.PageContents;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class AuthorFragment extends Fragment implements AsyncResponse {
 
     private final String TAG = "UserFragment";
     private Integer userID;
-    private ObservableScrollView scrollContainer;
+    private ScrollView scrollContainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,7 +47,7 @@ public class AuthorFragment extends Fragment implements AsyncResponse {
 
 
         // Get the container
-        scrollContainer = (ObservableScrollView) inflater.inflate(R.layout.fragment_author, container, false);
+        scrollContainer = (ScrollView) inflater.inflate(R.layout.fragment_author, container, false);
         scrollContainer.setVisibility(LinearLayout.GONE);
 
         return scrollContainer;
@@ -70,7 +58,7 @@ public class AuthorFragment extends Fragment implements AsyncResponse {
         getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
         scrollContainer.setVisibility(LinearLayout.VISIBLE);
 
-        if(result.isEmpty()) {
+        if (result.isEmpty()) {
             Log.e(TAG, "BADDD");
         }
         JSONObject json;
@@ -85,7 +73,7 @@ public class AuthorFragment extends Fragment implements AsyncResponse {
         try {
             ((TextView) scrollContainer.findViewById(R.id.author_fullname)).setText(json.getString("fullname"));
         } catch (Exception e) {
-            Log.e(TAG,"Could not add authors fullname");
+            Log.e(TAG, "Could not add authors fullname");
         }
 
     }

@@ -3,42 +3,28 @@ package com.reportermag.reporter.fragments;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.reportermag.reporter.R;
-import com.reportermag.reporter.listeners.ArticleListener;
 import com.reportermag.reporter.util.ArticlesList;
 import com.reportermag.reporter.util.AsyncResponse;
-import com.reportermag.reporter.util.DownloadImageTask;
-import com.reportermag.reporter.util.ObservableScrollView;
 import com.reportermag.reporter.util.PageContents;
-import com.reportermag.reporter.util.ScrollViewListener;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 
-public class SectionFragment extends Fragment implements AsyncResponse {
+public class SectionFragment extends Fragment implements AsyncResponse, AbsListView.OnScrollListener {
 
-    private final String TAG = "SectionFragment";
-    private ListView sectionContainer;
     private Integer sectionID;
     private LinearLayout titlebar;
     private Boolean loading = false;
@@ -78,6 +64,7 @@ public class SectionFragment extends Fragment implements AsyncResponse {
         articles = new ArticlesList(getActivity(), new ArrayList<JSONObject>());
 
         sectionContainer.setAdapter(articles);
+        sectionContainer.setOnScrollListener(this);
 
         return sectionContainer;
     }
@@ -90,5 +77,26 @@ public class SectionFragment extends Fragment implements AsyncResponse {
 
         // Unset loading
         loading = false;
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem,
+                         int visibleItemCount, int totalItemCount) {
+        //leave this empty
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView listView, int scrollState) {
+        int threshold = 1;
+
+        if (!loading && scrollState == SCROLL_STATE_IDLE) {
+            if (listView.getLastVisiblePosition() >= listView.getCount() - 1 - threshold) {
+
+                loading = true;
+                //load more list items:
+                PageContents downloadPage = new PageContents(this);
+                downloadPage.execute(getResources().getString(R.string.URL_SECTION) + "?s=" + sectionID + "&ln=" + articles.getLastNode());
+            }
+        }
     }
 }

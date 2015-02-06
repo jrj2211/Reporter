@@ -1,27 +1,27 @@
-<com.reportermag.reporter.util.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_container"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:paddingRight="10dp"
     android:layout_marginRight="5dp"
-    android:scrollbarStyle="outsideOverlay"
-    android:id="@+id/scroll_container">
+    android:paddingRight="10dp"
+    android:scrollbarStyle="outsideOverlay">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/article"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginLeft="15dp"
-        android:paddingTop="10dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingTop="10dp">
 
         <TextView
             android:id="@+id/article_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
             android:textColor="#151515"
             android:textSize="18dp"
-            android:textStyle="bold"
-            android:paddingBottom="5dp" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/article_byline"
@@ -42,11 +42,11 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/border_bottom"
-            android:paddingBottom="10dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="10dp">
 
         </LinearLayout>
 
     </LinearLayout>
 
-</com.reportermag.reporter.util.ObservableScrollView>
+</ScrollView>

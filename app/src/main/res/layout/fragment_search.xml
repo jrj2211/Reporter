@@ -9,45 +9,45 @@
         android:id="@+id/search_options"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:background="#dcdcdc"
         android:layout_gravity="top"
-        android:padding="7dp"
-        android:clickable="true" >
+        android:background="#dcdcdc"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:padding="7dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textSize="15dp"
-            android:textColor="#151515"
-            android:gravity="center_vertical"
             android:layout_weight=".50"
+            android:fontFamily="sans-serif"
+            android:gravity="center_vertical"
             android:text="Search For: "
-            android:fontFamily="sans-serif"/>
+            android:textColor="#151515"
+            android:textSize="15dp" />
 
         <Button
             android:id="@+id/search_articles_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textSize="15dp"
+            android:background="#c0c0c0"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:gravity="center"
             android:text="Articles"
-            android:fontFamily="sans-serif"
-            android:background="#c0c0c0"/>
+            android:textSize="15dp" />
 
         <Button
             android:id="@+id/search_authors_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textSize="15dp"
+            android:background="#c0c0c0"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:gravity="center"
             android:text="Authors"
-            android:fontFamily="sans-serif"
-            android:background="#c0c0c0" />
+            android:textSize="15dp" />
 
     </LinearLayout>
 
@@ -57,28 +57,22 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="20dp"
+        android:text="@string/noresults"
         android:textColor="@color/graydark"
         android:textSize="18dp"
-        android:visibility="gone"
-        android:text="@string/noresults"/>
+        android:visibility="gone" />
 
     <!-- Contents goes here -->
-    <com.reportermag.reporter.util.ObservableScrollView
+    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/search"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingRight="10dp"
         android:layout_marginRight="5dp"
-        android:scrollbarStyle="outsideOverlay"
-        android:id="@+id/scroll_container">
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:listSelector="#00000000"
+        android:scrollbarStyle="outsideOverlay">
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/search"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:orientation="vertical">
-
-        </LinearLayout>
-
-    </com.reportermag.reporter.util.ObservableScrollView>
+    </ListView>
 
 </LinearLayout>

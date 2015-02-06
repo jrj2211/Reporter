@@ -14,10 +14,10 @@
             android:id="@+id/loading"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
             android:indeterminate="true"
             android:padding="20dp"
-            android:layout_marginLeft="10dp"
-            android:layout_gravity="center"
             android:visibility="gone" />
 
         <!-- Where the fragments go -->
@@ -25,8 +25,8 @@
             android:id="@+id/fragment_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="#ffffff">
+            android:background="#ffffff"
+            android:orientation="vertical">
 
         </FrameLayout>
 
@@ -38,14 +38,14 @@
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="#303030"
         android:choiceMode="singleChoice"
         android:divider="#303030"
         android:dividerHeight="0dp"
-        android:paddingLeft="10dp"
         android:paddingBottom="10dp"
-        android:background="#303030">
+        android:paddingLeft="10dp">
 
-    <LinearLayout
+        <LinearLayout
             android:id="@+id/drawer_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

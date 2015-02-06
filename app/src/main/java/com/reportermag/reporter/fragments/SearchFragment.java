@@ -3,15 +3,11 @@ package com.reportermag.reporter.fragments;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.text.Html;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,50 +16,51 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.reportermag.reporter.R;
-import com.reportermag.reporter.listeners.ArticleListener;
-import com.reportermag.reporter.listeners.AuthorListener;
+import com.reportermag.reporter.util.ArticlesList;
 import com.reportermag.reporter.util.AsyncResponse;
-import com.reportermag.reporter.util.DownloadImageTask;
-import com.reportermag.reporter.util.ObservableScrollView;
+import com.reportermag.reporter.util.AuthorsList;
 import com.reportermag.reporter.util.PageContents;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 
 public class SearchFragment extends Fragment implements AsyncResponse {
 
-    private final String TAG = "SearchFragment";
-    private JSONArray json;
-    private LayoutInflater inflater;
-    private LinearLayout searchContainer;
-    private LinearLayout bodyContainer;
-    private LinearLayout titlebar;
-    private Boolean loading = false;
-    private Integer lastNode = null;
-    private AsyncResponse activity;
     private static Boolean searchForArticles = true;
     private static String searchTerms;
+    private LinearLayout searchContainer;
+    private ListView bodyContainer;
+    private LinearLayout titlebar;
+    private Boolean loading = false;
+    private AsyncResponse activity;
+    private ArticlesList articlesList;
+    private AuthorsList authorsList;
+
+    public static void clearSearch() {
+        searchTerms = "";
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         activity = this;
 
+        // Setup results containers
+        articlesList = new ArticlesList(getActivity(), new ArrayList<JSONObject>());
+        authorsList = new AuthorsList(getActivity(), new ArrayList<JSONObject>());
+
         // Load results if search terms exist
-        if(!searchTerms.isEmpty()) {
+        if (!searchTerms.isEmpty()) {
             PageContents downloadPage = new PageContents(this);
 
-            if(searchForArticles) {
+            if (searchForArticles) {
                 downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms);
             } else {
                 downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms + "&t=user");
@@ -101,7 +98,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
         // Get the container
         searchContainer = (LinearLayout) inflater.inflate(R.layout.fragment_search, container, false);
 
-        bodyContainer = (LinearLayout) searchContainer.findViewById(R.id.search);
+        bodyContainer = (ListView) searchContainer.findViewById(R.id.search);
 
         searchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -112,14 +109,12 @@ public class SearchFragment extends Fragment implements AsyncResponse {
 
                     getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
 
-                    bodyContainer.removeAllViews();
-
                     // Load the page contents
                     PageContents downloadPage = new PageContents(activity);
                     searchTerms = searchField.getText().toString();
 
-                    if(searchForArticles) {
-                        downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms);
+                    if (searchForArticles) {
+                        downloadPage.execute(getString(R.string.URL_SECTION) + "?search=" + searchTerms);
                     } else {
                         downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms + "&t=user");
                     }
@@ -130,61 +125,43 @@ public class SearchFragment extends Fragment implements AsyncResponse {
             }
         });
 
-        ((Button)searchContainer.findViewById(R.id.search_articles_button)).setOnClickListener(new View.OnClickListener() {
+        (searchContainer.findViewById(R.id.search_articles_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!searchForArticles && !searchTerms.isEmpty()) {
-                    bodyContainer.removeAllViews();
+                if (!searchForArticles) {
                     selectButton(0);
-                    getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
-                    PageContents downloadPage = new PageContents(activity);
-                    downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms);
+                    if (!searchTerms.isEmpty()) {
+                        getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                        PageContents downloadPage = new PageContents(activity);
+                        downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms);
+                    }
                 }
-
-                Button articles = (Button) v;
-                Button authors = (Button) getActivity().findViewById(R.id.search_authors_button);
-
-                articles.setTextColor(Color.parseColor("#ffffff"));
-                articles.setBackgroundColor(getResources().getColor(R.color.graydark));
-
-                authors.setTextColor(Color.parseColor("#151515"));
-                authors.setBackgroundColor(getResources().getColor(R.color.graylight));
 
                 searchForArticles = true;
             }
         });
 
-        ((Button)searchContainer.findViewById(R.id.search_authors_button)).setOnClickListener(new View.OnClickListener() {
+        (searchContainer.findViewById(R.id.search_authors_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(searchForArticles && !searchTerms.isEmpty()) {
-                    bodyContainer.removeAllViews();
-                    getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                if (searchForArticles) {
                     selectButton(1);
-                    PageContents downloadPage = new PageContents(activity);
-                    downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms + "&t=user");
+                    if (!searchTerms.isEmpty()) {
+                        getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                        PageContents downloadPage = new PageContents(activity);
+                        downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms + "&t=user");
+                    }
                 }
-
-                Button authors = (Button) v;
-                Button articles = (Button) getActivity().findViewById(R.id.search_articles_button);
-
-                authors.setTextColor(Color.parseColor("#ffffff"));
-                authors.setBackgroundColor(getResources().getColor(R.color.graydark));
-
-                articles.setTextColor(Color.parseColor("#151515"));
-                articles.setBackgroundColor(getResources().getColor(R.color.graylight));
 
                 searchForArticles = false;
             }
         });
 
-        if(searchForArticles) {
+        if (searchForArticles) {
             selectButton(0);
         } else {
             selectButton(1);
         }
-
-        this.inflater = inflater;
 
         return searchContainer;
     }
@@ -203,162 +180,31 @@ public class SearchFragment extends Fragment implements AsyncResponse {
         // Unset loading
         loading = false;
 
-        try {
-            json = new JSONArray(result.trim());
-        } catch (Exception e) {
-            Log.e(TAG, "Could not parse articles JSON.");
-            return;
-        }
-
-        if(searchForArticles) {
-            Log.i(TAG, "Searching articles...");
-
-            if(json.length() != 0) {
-                // Loop through results
-                for (int i = 0; i < json.length(); i++) {
-                    JSONObject article;
-                    Integer nodeID;
-
-                    // Get the article object
-                    try {
-                        article = json.getJSONObject(i);
-                        nodeID = article.getInt("nid");
-                        lastNode = nodeID;
-                    } catch (Exception e) {
-                        Log.e(TAG, "Couldn't get article object.");
-                        continue;
-                    }
-
-                    Integer nodeColor = Color.parseColor("#151515");
-
-                    // Create article container
-                    LinearLayout articleContainer = (LinearLayout) inflater.inflate(R.layout.article_abstract, searchContainer, false);
-                    bodyContainer.addView(articleContainer);
-
-                    // Add the section circle
-                    try {
-                        String nodeSection = Character.toString(article.getString("section_name").charAt(0));
-                        nodeColor = Color.parseColor(article.getString("section_color"));
-
-                        TextView articleSection = (TextView) articleContainer.findViewById(R.id.abstract_section);
-
-                        if (!nodeSection.isEmpty()) {
-                            articleSection.setText(nodeSection);
-                            GradientDrawable bgShape = (GradientDrawable) articleSection.getBackground();
-                            bgShape.setColor(nodeColor);
-                        } else {
-                            articleSection.setVisibility(TextView.GONE);
-                        }
-
-                    } catch (Exception e) {
-                        Log.e(TAG, "Could not get section for article id " + Integer.toString(nodeID));
-                    }
-
-                    // Add the Title
-                    try {
-                        TextView articleTitle = (TextView) articleContainer.findViewById(R.id.abstract_title);
-                        articleTitle.setText(article.getString("title"));
-                        articleTitle.setOnClickListener(new ArticleListener(nodeID, nodeColor, getActivity()));
-                    } catch (Exception e) {
-                        Log.e(TAG, "Could not get title for article id " + Integer.toString(nodeID));
-                    }
-
-                    // Add the byline
-                    try {
-                        JSONArray authors = article.getJSONArray("authors");
-                        TextView articleByline = (TextView) articleContainer.findViewById(R.id.abstract_byline);
-                        String author = authors.getJSONObject(0).getString("fullname");
-                        articleByline.setText("By " + author + " on " + article.getString("date_format"));
-                    } catch (Exception e) {
-                        Log.e(TAG, "Could not get byline for article id " + Integer.toString(nodeID));
-                    }
-
-                    // Add the summary
-                    try {
-                        String nodeBody = Html.fromHtml(article.getString("body")).toString();
-                        TextView articleSummary = (TextView) articleContainer.findViewById(R.id.abstract_summary);
-                        articleSummary.setText(nodeBody);
-                    } catch (Exception e) {
-                        Log.e(TAG, "Could not get summary/trimmed for article id " + Integer.toString(nodeID));
-                    }
-
-                    // Add the Image
-                    try {
-                        String nodeImage = article.getString("imgLink");
-                        if (!nodeImage.isEmpty() && !nodeImage.equals("[]")) {
-                            ImageView articleThumbnail = (ImageView) articleContainer.findViewById(R.id.abstract_image);
-                            articleThumbnail.setAdjustViewBounds(true);
-                            articleThumbnail.setVisibility(ImageView.VISIBLE);
-                            articleThumbnail.setOnClickListener(new ArticleListener(nodeID, nodeColor, getActivity()));
-
-                            // Download the image
-                            new DownloadImageTask(articleThumbnail).execute(nodeImage);
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "Could not get image for article id " + Integer.toString(nodeID));
-                    }
-                }
-            } else {
-                // No Results
-                getActivity().findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
-            }
+        if (searchForArticles) {
+            articlesList.loadJSON(result);
         } else {
-
-            Log.i(TAG, "Searching authors...");
-
-            // Loop through results
-            if(json.length() != 0) {
-                for (int i = 0; i < json.length(); i++) {
-
-                    JSONObject author;
-                    Integer authorID;
-
-                    // Get the article object
-                    try {
-                        author = json.getJSONObject(i);
-                        authorID = author.getInt("id");
-                    } catch (Exception e) {
-                        Log.e(TAG, "Couldn't get author object.");
-                        continue;
-                    }
-
-                    // Create author container
-                    LinearLayout authorContainer = (LinearLayout) inflater.inflate(R.layout.author_result, searchContainer, false);
-                    bodyContainer.addView(authorContainer);
-
-                    authorContainer.setOnClickListener(new AuthorListener(authorID, getActivity()));
-
-                    try {
-                        ((TextView) authorContainer.findViewById(R.id.search_author)).setText(author.getString("fullname"));
-                    } catch (Exception e) {
-
-                    }
-                }
-            } else {
-                // No Results
-                getActivity().findViewById(R.id.search_no_results).setVisibility(View.VISIBLE);
-            }
+            authorsList.loadJSON(result);
         }
     }
 
     private void selectButton(int type) {
-        Button articles = (Button)searchContainer.findViewById(R.id.search_articles_button);
-        Button authors = (Button)searchContainer.findViewById(R.id.search_authors_button);
+        Button articles = (Button) searchContainer.findViewById(R.id.search_articles_button);
+        Button authors = (Button) searchContainer.findViewById(R.id.search_authors_button);
 
-        if(type == 0) {
+        if (type == 0) {
             articles.setBackgroundColor(Color.parseColor("#151515"));
             articles.setTextColor(Color.WHITE);
             authors.setBackgroundColor(Color.parseColor("#c0c0c0"));
             authors.setTextColor(Color.BLACK);
+            bodyContainer.setAdapter(articlesList);
+            authorsList.clear();
         } else {
             authors.setBackgroundColor(Color.parseColor("#151515"));
             authors.setTextColor(Color.WHITE);
             articles.setBackgroundColor(Color.parseColor("#c0c0c0"));
             articles.setTextColor(Color.BLACK);
+            bodyContainer.setAdapter(authorsList);
+            articlesList.clear();
         }
-    }
-
-    public static void clearSearch() {
-        searchTerms = "";
     }
 }

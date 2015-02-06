@@ -5,7 +5,6 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.LinearLayout;
 
 import com.reportermag.reporter.R;
 import com.reportermag.reporter.fragments.ArticleFragment;
-import com.reportermag.reporter.fragments.AuthorFragment;
 
 public class ArticleListener implements View.OnClickListener {
     private Integer id;

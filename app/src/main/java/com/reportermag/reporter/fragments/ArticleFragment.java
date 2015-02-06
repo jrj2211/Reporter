@@ -13,13 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.reportermag.reporter.R;
 import com.reportermag.reporter.util.AsyncResponse;
 import com.reportermag.reporter.util.DownloadImageTask;
-import com.reportermag.reporter.util.ObservableScrollView;
 import com.reportermag.reporter.util.PageContents;
+import com.reportermag.reporter.util.ScrollImageView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,10 +32,11 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
 
     private final String TAG = "ArticleFragment";
     private Integer nodeID;
-    private ObservableScrollView scrollContainer;
+    private ScrollView scrollContainer;
     private LinearLayout bodyContainer;
     private View currentView;
     private SpannableStringBuilder buffer;
+    private View loadingView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,6 +48,8 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
         getActivity().findViewById(R.id.header_back).setVisibility(View.VISIBLE);
         getActivity().findViewById(R.id.header_search_field).setVisibility(View.GONE);
 
+        loadingView = getActivity().findViewById(R.id.loading);
+
         // Get article to load
         Bundle arguments = this.getArguments();
         nodeID = arguments.getInt("id");
@@ -56,12 +60,12 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
             PageContents downloadPage = new PageContents(this);
             downloadPage.execute(getString(R.string.URL_ARTICLE) + Integer.toString(nodeID) + ".json");
         }
-        
+
         // Hide search
 
 
         // Get the container
-        scrollContainer = (ObservableScrollView) inflater.inflate(R.layout.fragment_article, container, false);
+        scrollContainer = (ScrollView) inflater.inflate(R.layout.fragment_article, container, false);
         scrollContainer.setVisibility(LinearLayout.GONE);
 
         bodyContainer = (LinearLayout) scrollContainer.findViewById(R.id.article_body);
@@ -72,7 +76,9 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
     @Override
     public void processFinish(String result) {
 
-        getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+        if (loadingView.getVisibility() != View.GONE) {
+            loadingView.setVisibility(View.GONE);
+        }
         scrollContainer.setVisibility(LinearLayout.VISIBLE);
 
         Integer mainColor = 0;
@@ -102,7 +108,7 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
             try {
                 if (imgLink != null && !imgLink.isEmpty() && !imgLink.equals("[]")) {
                     ImageView articleThumbnail = (ImageView) getActivity().findViewById(R.id.article).findViewById(R.id.article_image);
-                    new DownloadImageTask(articleThumbnail).execute(imgLink);
+                    new DownloadImageTask((ScrollImageView) articleThumbnail).execute(imgLink);
                     articleThumbnail.setAdjustViewBounds(true);
                 }
             } catch (Exception e) {
