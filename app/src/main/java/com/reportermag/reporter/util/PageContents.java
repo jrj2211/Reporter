@@ -26,11 +26,13 @@ public class PageContents extends AsyncTask<String, Void, String> {
 
         String data = null;
 
+        String url = urls[0].replaceAll(" ", "%20");
+
         try {
             HttpClient client = new DefaultHttpClient();
-            HttpGet request = new HttpGet(urls[0]);
+            HttpGet request = new HttpGet(url);
             HttpResponse response = client.execute(request);
-            Log.e("PageContents", urls[0]);
+            Log.i("PageContents", url);
             HttpEntity entity = response.getEntity();
 
             int status = response.getStatusLine().getStatusCode();

@@ -11,22 +11,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.reportermag.reporter.R;
 import com.reportermag.reporter.util.AsyncResponse;
-import com.reportermag.reporter.util.DownloadImageTask;
 import com.reportermag.reporter.util.PageContents;
 import com.reportermag.reporter.util.ScrollImageView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class ArticleFragment extends Fragment implements AsyncResponse {
 
@@ -36,7 +31,6 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
     private LinearLayout bodyContainer;
     private View currentView;
     private SpannableStringBuilder buffer;
-    private View loadingView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -47,8 +41,6 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
         getActivity().findViewById(R.id.logo).setVisibility(View.VISIBLE);
         getActivity().findViewById(R.id.header_back).setVisibility(View.VISIBLE);
         getActivity().findViewById(R.id.header_search_field).setVisibility(View.GONE);
-
-        loadingView = getActivity().findViewById(R.id.loading);
 
         // Get article to load
         Bundle arguments = this.getArguments();
@@ -76,63 +68,90 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
     @Override
     public void processFinish(String result) {
 
-        if (loadingView.getVisibility() != View.GONE) {
-            loadingView.setVisibility(View.GONE);
-        }
         scrollContainer.setVisibility(LinearLayout.VISIBLE);
 
-        Integer mainColor = 0;
-        String author = null;
-        String title = null;
-        Integer date = 0;
-        String imgLink = null;
-        JSONArray body = null;
-
+        // Get the json
+        JSONObject json = null;
         try {
-            Log.i("REPORTER", "Downloaded page JSON contents");
-
-            try {
-                JSONObject json = new JSONObject(result.trim());
-
-                mainColor = Color.parseColor(json.getString("sectionColor"));
-                author = json.getString("author_fullname");
-                title = json.getString("title");
-                date = Integer.parseInt(json.getString("date"));
-                imgLink = json.getString("imgLink");
-                body = (JSONArray) json.get("body");
-            } catch (Exception e) {
-                Log.e("REPORTER", e.getMessage());
-            }
-
-            // Add the Image
-            try {
-                if (imgLink != null && !imgLink.isEmpty() && !imgLink.equals("[]")) {
-                    ImageView articleThumbnail = (ImageView) getActivity().findViewById(R.id.article).findViewById(R.id.article_image);
-                    new DownloadImageTask((ScrollImageView) articleThumbnail).execute(imgLink);
-                    articleThumbnail.setAdjustViewBounds(true);
-                }
-            } catch (Exception e) {
-                Log.e("Article", "Could not get image for article id " + Integer.toString(nodeID));
-            }
-
-            LinearLayout titlebar = (LinearLayout) getActivity().findViewById(R.id.header);
-            titlebar.setBackgroundColor(mainColor);
-
-            TextView titleView = (TextView) getActivity().findViewById(R.id.article_title);
-            titleView.setText(title);
-
-            TextView byline = (TextView) getActivity().findViewById(R.id.article_byline);
-            SimpleDateFormat formatter = new SimpleDateFormat("MMM d, yyyy");
-            byline.setText("By " + author + " on " + formatter.format(new Date(date * 1000L)));
-            byline.setTextColor(Color.parseColor("#151515"));
-
-            buffer = new SpannableStringBuilder();
-
-            parse(body, "");
+            json = new JSONObject(result.trim());
         } catch (Exception e) {
-            Log.e("REPORTER", "Error downloading json contents.");
+            Log.e(TAG, "Could not parse json.");
+            return;
         }
 
+        // Set the titlebar color
+        try {
+            LinearLayout titlebar = (LinearLayout) getActivity().findViewById(R.id.header);
+            titlebar.setBackgroundColor(Color.parseColor(json.getString("sectionColor")));
+        } catch (Exception e) {
+            Log.e(TAG, "Could not set title.");
+            return;
+        }
+
+        // Set the title
+        try {
+            TextView titleView = (TextView) getActivity().findViewById(R.id.article_title);
+            titleView.setText(json.getString("title"));
+        } catch (Exception e) {
+            Log.e(TAG, "Could not set title.");
+            return;
+        }
+
+        // Set the byline
+        try {
+
+            SpannableStringBuilder byline_text = new SpannableStringBuilder();
+            byline_text.append("By ");
+
+            TextView byline = (TextView) getActivity().findViewById(R.id.article_byline);
+
+            JSONArray authors = json.getJSONArray("authors");
+            for (int i = 0; i < authors.length(); i++) {
+                JSONObject author = authors.getJSONObject(i);
+
+                if (i > 0) {
+                    byline_text.append(", ");
+                }
+
+
+                int start = byline_text.length();
+                byline_text.append(author.getString("fullname"));
+                //byline_text.setSpan(click, start, byline_text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            }
+
+            byline_text.append(" on " + json.getString("date_format"));
+
+            byline.setText(byline_text);
+
+        } catch (Exception e) {
+            Log.e(TAG, "Could not set byline.");
+            return;
+        }
+
+        // Set the image
+        try {
+            String imgLink = json.getString("imgLink");
+            int imgWidth = Integer.parseInt(json.getString("imgWidth"));
+            int imgHeight = Integer.parseInt(json.getString("imgHeight"));
+
+            if (imgLink != null && !imgLink.isEmpty() && !imgLink.equals("[]")) {
+                ScrollImageView articleThumbnail = (ScrollImageView) getActivity().findViewById(R.id.article).findViewById(R.id.article_image);
+                articleThumbnail.setDimensions(imgWidth, imgHeight);
+                articleThumbnail.downloadImage(imgLink);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Could not get image for article id " + Integer.toString(nodeID));
+        }
+
+        buffer = new SpannableStringBuilder();
+
+        // Parse the body
+        try {
+            parse(json.getJSONArray("body"), "");
+        } catch (Exception e) {
+            Log.e(TAG, "Could not set the body");
+        }
     }
 
     private void parse(JSONObject json) {
@@ -179,6 +198,8 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
                         case "i":
                             buffer.setSpan(new StyleSpan(Typeface.ITALIC), start, buffer.length(), 0);
                             break;
+                        case "a":
+                            Log.i(TAG, "link!");
                     }
 
                 }

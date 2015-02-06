@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.reportermag.reporter.R;
@@ -24,20 +26,28 @@ import java.util.ArrayList;
 /**
  * Created by joe on 2/3/2015.
  */
-public class ArticlesList extends ArrayAdapter<String> {
+public class ArticlesList extends ArrayAdapter<String> implements AsyncResponse {
 
     private static LayoutInflater inflater;
     private final Activity context;
     private final String TAG = "ArticlesList";
     private Integer lastNode = null;
     private ArrayList<JSONObject> articles;
+    private boolean loading = false;
+    private boolean showLess = false;
+    private ListView container;
+    private ProgressBar loadMoreView;
 
-    public ArticlesList(Activity context, ArrayList objects) {
+    public ArticlesList(Activity context, ArrayList objects, ListView container) {
         super(context, R.layout.article_abstract, objects);
 
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         this.context = context;
+        this.container = container;
+
+        loadMoreView = new ProgressBar(context);
+        loadMoreView.setPadding(0, 30, 0, 30);
 
         articles = objects;
     }
@@ -101,12 +111,17 @@ public class ArticlesList extends ArrayAdapter<String> {
         }
 
         // Add the byline
-        try {
-            JSONArray authors = article.getJSONArray("authors");
-            String author = authors.getJSONObject(0).getString("fullname");
-            holder.byline.setText("By " + author + " on " + article.getString("date_format"));
-        } catch (Exception e) {
-            Log.e(TAG, "Could not get byline for article id " + Integer.toString(nodeID));
+        if (!showLess) {
+            try {
+                JSONArray authors = article.getJSONArray("authors");
+                String author = authors.getJSONObject(0).getString("fullname");
+                holder.byline.setText("By " + author + " on " + article.getString("date_format"));
+                holder.byline.setVisibility(View.VISIBLE);
+            } catch (Exception e) {
+                Log.e(TAG, "Could not get byline for article id " + Integer.toString(nodeID));
+            }
+        } else {
+            holder.byline.setVisibility(View.GONE);
         }
 
         // Add the summary
@@ -118,31 +133,51 @@ public class ArticlesList extends ArrayAdapter<String> {
         }
 
         // Add the Image
-        try {
-            String nodeImage = article.getString("imgLink");
-            int nodeImageHeight = Integer.parseInt(article.getString("imgHeight"));
-            int nodeImageWidth = Integer.parseInt(article.getString("imgWidth"));
+        if (!showLess) {
+            try {
+                String nodeImage = article.getString("imgLink");
+                int nodeImageHeight = Integer.parseInt(article.getString("imgHeight"));
+                int nodeImageWidth = Integer.parseInt(article.getString("imgWidth"));
 
-            if (!nodeImage.isEmpty() && !nodeImage.equals("[]")) {
-                holder.thumbnail.setAdjustViewBounds(false);
-                holder.thumbnail.setVisibility(ImageView.VISIBLE);
-                holder.thumbnail.setOnClickListener(new ArticleListener(nodeID, nodeColor, context));
-                holder.thumbnail.setImageDrawable(null);
-                holder.thumbnail.setDimensions(nodeImageWidth, nodeImageHeight);
+                if (!nodeImage.isEmpty() && !nodeImage.equals("[]")) {
+                    holder.thumbnail.setAdjustViewBounds(false);
+                    holder.thumbnail.setVisibility(ImageView.VISIBLE);
+                    holder.thumbnail.setOnClickListener(new ArticleListener(nodeID, nodeColor, context));
+                    holder.thumbnail.setImageDrawable(null);
+                    holder.thumbnail.setDimensions(nodeImageWidth, nodeImageHeight);
 
-                // Download the image
-                holder.thumbnail.downloadImage(nodeImage);
+                    // Download the image
+                    holder.thumbnail.downloadImage(nodeImage);
 
+                }
+            } catch (Exception e) {
             }
-        } catch (Exception e) {
         }
 
         return view;
     }
 
-    public void loadJSON(String result) {
-        JSONArray json;
+    public void loadJSON(String URL) {
+        loading = true;
 
+        container.addFooterView(loadMoreView);
+
+        PageContents downloadPage = new PageContents(this);
+        downloadPage.execute(URL);
+    }
+
+    public int getLastNode() {
+        return lastNode;
+    }
+
+    @Override
+    public void processFinish(String result) {
+
+        container.removeFooterView(loadMoreView);
+
+        loading = false;
+
+        JSONArray json;
         try {
             json = new JSONArray(result.trim());
         } catch (Exception e) {
@@ -161,11 +196,24 @@ public class ArticlesList extends ArrayAdapter<String> {
             }
         }
 
+        View noResults = ((Activity) context).findViewById(R.id.search_no_results);
+        if (noResults != null) {
+            if (articles.size() == 0) {
+                noResults.setVisibility(View.VISIBLE);
+            } else {
+                noResults.setVisibility(View.GONE);
+            }
+        }
+
         this.notifyDataSetChanged();
     }
 
-    public int getLastNode() {
-        return lastNode;
+    public boolean isLoading() {
+        return loading;
+    }
+
+    public void showLess() {
+        showLess = true;
     }
 
     static class ViewHolder {

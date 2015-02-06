@@ -30,8 +30,6 @@ public class ArticleListener implements View.OnClickListener {
 
     public void loadArticleFragment() {
 
-        activity.findViewById(R.id.loading).setVisibility(View.VISIBLE);
-
         FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
 
         // Set the arguments

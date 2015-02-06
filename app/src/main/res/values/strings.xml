@@ -9,10 +9,12 @@
     <string name="action_settings">Settings</string>
 
     <string name="URL">http://reporter.rit.edu/api/</string>
-    <string name="URL_SECTION">http://reporter.rit.edu/api/section.json</string>
-    <string name="URL_SEARCH">http://reporter.rit.edu/api/search.json</string>
+    <string name="URL_ARTICLES">http://reporter.rit.edu/api/articles.json</string>
     <string name="URL_SECTIONS">http://reporter.rit.edu/api/sections.json</string>
     <string name="URL_ARTICLE">http://reporter.rit.edu/api/article/</string>
     <string name="URL_AUTHOR">http://reporter.rit.edu/api/author.json</string>
+
     <string name="noresults">No results found.</string>
+    <string name="noabout">This author does not have an about.</string>
+    <string name="worksbyauthor">Works By Author</string>
 </resources>

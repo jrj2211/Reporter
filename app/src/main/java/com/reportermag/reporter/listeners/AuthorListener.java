@@ -29,8 +29,6 @@ public class AuthorListener implements View.OnClickListener {
 
     public void loadAuthorFragment() {
 
-        activity.findViewById(R.id.loading).setVisibility(View.VISIBLE);
-
         FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
 
         // Set the arguments

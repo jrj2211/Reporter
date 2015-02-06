@@ -28,6 +28,7 @@ public class Main extends CustomActivity implements AsyncResponse {
     private JSONArray json;
     private LayoutInflater inflater;
     private Map<Integer, Fragment> sections;
+    private int sectionsIsPopulated = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,30 @@ public class Main extends CustomActivity implements AsyncResponse {
 
         sections = new HashMap<>();
 
+        (findViewById(R.id.header_more)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    View drawer = findViewById(R.id.drawer);
+                    if (drawerLayout.isDrawerOpen(drawer)) {
+                        drawerLayout.closeDrawer(drawer);
+                    } else {
+                        drawerLayout.openDrawer(drawer);
+
+                        if (sectionsIsPopulated == -1) {
+                            // Download the sections for the drawer
+                            PageContents sections = new PageContents((AsyncResponse) activity);
+                            sections.execute(getString(R.string.URL_SECTIONS));
+                            sectionsIsPopulated = 0;
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         // Store the inflater
         inflater = LayoutInflater.from(this);
 
@@ -43,15 +68,18 @@ public class Main extends CustomActivity implements AsyncResponse {
         loadSectionFragment(0, false);
 
         // Download the sections for the drawer
-        PageContents sections = new PageContents(this);
+        PageContents sections = new PageContents((AsyncResponse) activity);
         sections.execute(getString(R.string.URL_SECTIONS));
     }
 
     public void processFinish(String result) {
+
         try {
             json = new JSONArray(result.trim());
+            sectionsIsPopulated = 1;
         } catch (Exception e) {
             Log.e(TAG, "Could not parse sections JSON.");
+            sectionsIsPopulated = -1;
         }
 
         // Loop through results
@@ -72,9 +100,6 @@ public class Main extends CustomActivity implements AsyncResponse {
                     }
 
                     String sectionColor = sectionInfo.getString("color");
-                    if (!sectionColor.startsWith("#")) {
-                        sectionColor = "#" + sectionColor;
-                    }
 
                     try {
                         Color.parseColor(sectionColor);
@@ -112,8 +137,6 @@ public class Main extends CustomActivity implements AsyncResponse {
     }
 
     public void loadSectionFragment(Integer sectionID, boolean backstack) {
-
-        findViewById(R.id.loading).setVisibility(View.VISIBLE);
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 

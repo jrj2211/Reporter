@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -22,16 +23,13 @@ import android.widget.TextView;
 
 import com.reportermag.reporter.R;
 import com.reportermag.reporter.util.ArticlesList;
-import com.reportermag.reporter.util.AsyncResponse;
 import com.reportermag.reporter.util.AuthorsList;
-import com.reportermag.reporter.util.PageContents;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-
-public class SearchFragment extends Fragment implements AsyncResponse {
+public class SearchFragment extends Fragment implements AbsListView.OnScrollListener {
 
     private static Boolean searchForArticles = true;
     private static String searchTerms;
@@ -39,7 +37,6 @@ public class SearchFragment extends Fragment implements AsyncResponse {
     private ListView bodyContainer;
     private LinearLayout titlebar;
     private Boolean loading = false;
-    private AsyncResponse activity;
     private ArticlesList articlesList;
     private AuthorsList authorsList;
 
@@ -49,23 +46,6 @@ public class SearchFragment extends Fragment implements AsyncResponse {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        activity = this;
-
-        // Setup results containers
-        articlesList = new ArticlesList(getActivity(), new ArrayList<JSONObject>());
-        authorsList = new AuthorsList(getActivity(), new ArrayList<JSONObject>());
-
-        // Load results if search terms exist
-        if (!searchTerms.isEmpty()) {
-            PageContents downloadPage = new PageContents(this);
-
-            if (searchForArticles) {
-                downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms);
-            } else {
-                downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms + "&t=user");
-            }
-        }
 
         final EditText searchField = (EditText) getActivity().findViewById(R.id.header_search_field);
         searchField.setText(searchTerms);
@@ -100,6 +80,22 @@ public class SearchFragment extends Fragment implements AsyncResponse {
 
         bodyContainer = (ListView) searchContainer.findViewById(R.id.search);
 
+        // Setup results containers
+        articlesList = new ArticlesList(getActivity(), new ArrayList<JSONObject>(), bodyContainer);
+        authorsList = new AuthorsList(getActivity(), new ArrayList<JSONObject>(), bodyContainer);
+
+        bodyContainer.setOnScrollListener(this);
+
+
+        // Load results if search terms exist
+        if (!searchTerms.isEmpty()) {
+            if (searchForArticles) {
+                articlesList.loadJSON(getString(R.string.URL_ARTICLES) + "?search=" + searchTerms);
+            } else {
+                authorsList.loadJSON(getString(R.string.URL_AUTHOR) + "?search=" + searchTerms);
+            }
+        }
+
         searchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -107,16 +103,17 @@ public class SearchFragment extends Fragment implements AsyncResponse {
                     imm.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
                     searchField.clearFocus();
 
-                    getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                    getActivity().findViewById(R.id.search_no_results).setVisibility(View.GONE);
 
-                    // Load the page contents
-                    PageContents downloadPage = new PageContents(activity);
+
                     searchTerms = searchField.getText().toString();
 
                     if (searchForArticles) {
-                        downloadPage.execute(getString(R.string.URL_SECTION) + "?search=" + searchTerms);
+                        articlesList.clear();
+                        articlesList.loadJSON(getString(R.string.URL_ARTICLES) + "?search=" + searchTerms);
                     } else {
-                        downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms + "&t=user");
+                        authorsList.clear();
+                        authorsList.loadJSON(getString(R.string.URL_AUTHOR) + "?search=" + searchTerms);
                     }
 
                     return true;
@@ -131,9 +128,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
                 if (!searchForArticles) {
                     selectButton(0);
                     if (!searchTerms.isEmpty()) {
-                        getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
-                        PageContents downloadPage = new PageContents(activity);
-                        downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms);
+                        articlesList.loadJSON(getString(R.string.URL_ARTICLES) + "?search=" + searchTerms);
                     }
                 }
 
@@ -147,9 +142,7 @@ public class SearchFragment extends Fragment implements AsyncResponse {
                 if (searchForArticles) {
                     selectButton(1);
                     if (!searchTerms.isEmpty()) {
-                        getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
-                        PageContents downloadPage = new PageContents(activity);
-                        downloadPage.execute(getString(R.string.URL_SEARCH) + "?s=" + searchTerms + "&t=user");
+                        authorsList.loadJSON(getString(R.string.URL_AUTHOR) + "?search=" + searchTerms);
                     }
                 }
 
@@ -172,24 +165,10 @@ public class SearchFragment extends Fragment implements AsyncResponse {
         ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(searchField.getWindowToken(), 0);
     }
 
-    @Override
-    public void processFinish(String result) {
-        getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
-        getActivity().findViewById(R.id.search_no_results).setVisibility(View.GONE);
-
-        // Unset loading
-        loading = false;
-
-        if (searchForArticles) {
-            articlesList.loadJSON(result);
-        } else {
-            authorsList.loadJSON(result);
-        }
-    }
-
     private void selectButton(int type) {
         Button articles = (Button) searchContainer.findViewById(R.id.search_articles_button);
         Button authors = (Button) searchContainer.findViewById(R.id.search_authors_button);
+        searchContainer.findViewById(R.id.search_no_results).setVisibility(View.GONE);
 
         if (type == 0) {
             articles.setBackgroundColor(Color.parseColor("#151515"));
@@ -205,6 +184,26 @@ public class SearchFragment extends Fragment implements AsyncResponse {
             articles.setTextColor(Color.BLACK);
             bodyContainer.setAdapter(authorsList);
             articlesList.clear();
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        //leave this empty
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView listView, int scrollState) {
+        int threshold = 1;
+
+        if (searchForArticles) {
+
+            if (!articlesList.isLoading() && scrollState == SCROLL_STATE_IDLE) {
+                if (listView.getLastVisiblePosition() >= listView.getCount() - 1 - threshold) {
+                    articlesList.loadJSON(getResources().getString(R.string.URL_ARTICLES) + "?search=" + searchTerms + "&ln=" + articlesList.getLastNode());
+
+                }
+            }
         }
     }
 }
