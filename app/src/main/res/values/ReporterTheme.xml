@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="ReporterTitleBarBG">
-        <item name="android:background">#ffffff</item>
-    </style>
-
     <style name="ReporterTheme" parent="android:Theme">
         <item name="android:windowTitleSize">55dip</item>
-        <item name="android:windowTitleBackgroundStyle">@style/ReporterTitleBarBG</item>
+        <item name="android:windowTitleBackgroundStyle">@android:color/transparent</item>
+        <item name="android:windowTitleStyle">@android:color/transparent</item>
+        <item name="android:displayOptions"></item>
     </style>
 </resources>

@@ -7,45 +7,61 @@
     android:scrollbarStyle="outsideOverlay">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/article"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginLeft="15dp"
         android:orientation="vertical"
         android:paddingTop="10dp">
 
-        <TextView
-            android:id="@+id/article_title"
+        <ProgressBar
+            android:id="@+id/article_load"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="5dp"
-            android:textColor="#151515"
-            android:textSize="18dp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/article_byline"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/border_bottom"
-            android:paddingBottom="10dp"
-            android:textColor="#151515"
-            android:textSize="13dp" />
-
-        <com.reportermag.reporter.util.ScrollImageView
-            android:id="@+id/article_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp" />
+            android:layout_height="match_parent" />
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/article_body"
+            android:id="@+id/article"
+            android:visibility="gone"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/border_bottom"
-            android:orientation="vertical"
-            android:paddingBottom="10dp">
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/article_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:textColor="#151515"
+                android:textSize="18dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/article_byline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/border_bottom"
+                android:paddingBottom="10dp"
+                android:textColor="#151515"
+                android:textSize="13dp" />
+
+            <ViewFlipper
+                android:id="@+id/article_slideshow"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:visibility="gone" >
+
+            </ViewFlipper>
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/article_body"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_bottom"
+                android:orientation="vertical"
+                android:textSize="15dp"
+                android:textColor="#151515"
+                android:paddingBottom="15dp" />
 
         </LinearLayout>
 
