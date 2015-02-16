@@ -63,6 +63,14 @@
                 android:textColor="#151515"
                 android:paddingBottom="15dp" />
 
+            <WebView
+                android:id="@+id/disqus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                </WebView>
+
         </LinearLayout>
 
     </LinearLayout>

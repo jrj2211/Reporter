@@ -18,6 +18,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -199,6 +203,18 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
         } catch (Exception e) {
             Log.e(TAG, "Could not set the body");
         }
+
+        // Add the Disqus Comments
+        try {
+            WebView webDisqus = (WebView) scrollContainer.findViewById(R.id.disqus);
+            WebSettings webSettings2 = webDisqus.getSettings();
+            webSettings2.setJavaScriptEnabled(true);
+            webSettings2.setBuiltInZoomControls(true);
+            webDisqus.requestFocusFromTouch();
+            webDisqus.setWebViewClient(new WebViewClient());
+            webDisqus.setWebChromeClient(new WebChromeClient());
+            webDisqus.loadUrl("http://reporter.rit.edu/sites/disqus.php?identifier=" + json.getString("disqus") + "&color=" + json.getString("sectionColor").replaceAll("#",""));
+        } catch (Exception e) {}
     }
 
     private void parse(JSONArray json, boolean outerContainer) {
