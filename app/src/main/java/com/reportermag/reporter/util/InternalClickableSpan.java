@@ -1,12 +1,8 @@
 package com.reportermag.reporter.util;
 
 import android.app.Activity;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.text.TextPaint;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.View;
 
 public class InternalClickableSpan extends ClickableSpan {

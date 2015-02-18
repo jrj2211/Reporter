@@ -1,28 +1,21 @@
 package com.reportermag.reporter.fragments;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -39,9 +32,6 @@ import com.reportermag.reporter.util.ScrollImageView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Iterator;
-import java.util.zip.Inflater;
-
 public class ArticleFragment extends Fragment implements AsyncResponse {
 
     private final String TAG = "ArticleFragment";
@@ -52,7 +42,6 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
     private LayoutInflater inflater;
 
     private ViewFlipper viewFlipper;
-    private float lastX;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -104,7 +93,7 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
         scrollContainer.findViewById(R.id.article).setVisibility(LinearLayout.VISIBLE);
 
         // Get the json
-        JSONObject json = null;
+        JSONObject json = new JSONObject();
         try {
             json = new JSONObject(result.trim());
         } catch (Exception e) {
@@ -152,7 +141,9 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
                 byline_text.append(author.getString("fullname"));
                 try {
                     byline_text.setSpan(new InternalClickableSpan(getActivity(), new AuthorListener(author.getInt("id"), getActivity()), sectionColor), start, byline_text.length(), 0);
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                    Log.e(TAG, "Could not add article author.");
+                }
             }
 
             byline_text.append(" on " + json.getString("date_format"));

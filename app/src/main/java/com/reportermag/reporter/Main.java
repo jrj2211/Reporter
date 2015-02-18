@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.reportermag.reporter.fragments.RingsFragment;
 import com.reportermag.reporter.fragments.SectionFragment;
 import com.reportermag.reporter.util.AsyncResponse;
 import com.reportermag.reporter.util.PageContents;
@@ -82,12 +83,13 @@ public class Main extends CustomActivity implements AsyncResponse {
             sectionsIsPopulated = -1;
         }
 
+        LinearLayout drawer = (LinearLayout) findViewById(R.id.drawer_container);
+
         // Loop through results
         if (json != null) {
             for (int i = 0; i < json.length(); i++) {
 
                 try {
-                    LinearLayout drawer = (LinearLayout) findViewById(R.id.drawer_container);
 
                     JSONObject sectionInfo = json.getJSONObject(i);
                     Button sectionButton = (Button) inflater.inflate(R.layout.drawer_button, drawer, false);
@@ -133,6 +135,26 @@ public class Main extends CustomActivity implements AsyncResponse {
                 }
 
             }
+
+            // Add Rings
+            Button ringsButton = (Button) inflater.inflate(R.layout.drawer_button, drawer, false);
+            ringsButton.setText("RINGS");
+            ringsButton.setTextColor(Color.parseColor("#188f6c"));
+            ringsButton.setOnClickListener(new View.OnClickListener() {
+
+                public void onClick(View v) {
+
+                    loadRingsFragment();
+
+                    // Close the drawer
+                    DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    View drawer = findViewById(R.id.drawer);
+                    drawerLayout.closeDrawer(drawer);
+                }
+
+            });
+
+            drawer.addView(ringsButton);
         }
     }
 
@@ -159,6 +181,20 @@ public class Main extends CustomActivity implements AsyncResponse {
         if (backstack) {
             transaction.addToBackStack(null);
         }
+
+        // Commit the new fragment
+        transaction.commit();
+    }
+
+    public void loadRingsFragment() {
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        // Add the rings fragment
+        RingsFragment ringsFrag = new RingsFragment();
+        transaction.setCustomAnimations(R.animator.enter_anim, R.animator.exit_anim);
+        transaction.replace(R.id.fragment_container, ringsFrag);
+        transaction.addToBackStack(null);
 
         // Commit the new fragment
         transaction.commit();
