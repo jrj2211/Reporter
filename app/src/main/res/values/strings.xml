@@ -13,6 +13,7 @@
     <string name="URL_SECTIONS">http://reporter.rit.edu/api/sections.json</string>
     <string name="URL_ARTICLE">http://reporter.rit.edu/api/article/</string>
     <string name="URL_AUTHOR">http://reporter.rit.edu/api/author.json</string>
+    <string name="URL_RINGS">http://reporter.rit.edu/api/rings.json</string>
 
     <string name="noresults">No results found.</string>
     <string name="noabout">This author does not have an about.</string>

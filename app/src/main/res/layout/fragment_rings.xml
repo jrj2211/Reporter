@@ -1,12 +1,19 @@
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rings"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_marginRight="5dp"
-    android:divider="@null"
-    android:dividerHeight="0dp"
-    android:listSelector="#00000000"
-    android:background="@color/rings"
-    android:scrollbarStyle="outsideOverlay">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-</ListView>
+    <ListView
+        android:id="@+id/rings"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:divider="@null"
+        android:listSelector="#00000000"
+        android:scrollbarSize="0dp"
+        android:scrollbarStyle="outsideInset"
+        android:scrollbarThumbVertical="@drawable/scrollthumb">
+
+    </ListView>
+
+</LinearLayout>

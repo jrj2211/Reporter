@@ -1,11 +1,8 @@
 package com.reportermag.reporter.fragments;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.KeyEvent;
@@ -24,6 +21,7 @@ import android.widget.TextView;
 import com.reportermag.reporter.R;
 import com.reportermag.reporter.util.ArticlesList;
 import com.reportermag.reporter.util.AuthorsList;
+import com.reportermag.reporter.util.Titlebar;
 
 import org.json.JSONObject;
 
@@ -35,8 +33,7 @@ public class SearchFragment extends Fragment implements AbsListView.OnScrollList
     private static String searchTerms;
     private LinearLayout searchContainer;
     private ListView bodyContainer;
-    private LinearLayout titlebar;
-    private Boolean loading = false;
+    private EditText searchField;
     private ArticlesList articlesList;
     private AuthorsList authorsList;
 
@@ -47,16 +44,12 @@ public class SearchFragment extends Fragment implements AbsListView.OnScrollList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        final EditText searchField = (EditText) getActivity().findViewById(R.id.header_search_field);
+        // Set the titlebar
+        Titlebar.setColor(getResources().getColor(R.color.graydark));
+        Titlebar.setVisible(Titlebar.VIEWS.BACK, Titlebar.VIEWS.SEARCH_INPUT);
+
+        searchField = (EditText) getActivity().findViewById(R.id.header_search_field);
         searchField.setText(searchTerms);
-
-        // Set visibility
-        getActivity().findViewById(R.id.header_more).setVisibility(View.GONE);
-        getActivity().findViewById(R.id.header_search).setVisibility(View.GONE);
-        getActivity().findViewById(R.id.logo).setVisibility(View.GONE);
-        getActivity().findViewById(R.id.header_back).setVisibility(View.VISIBLE);
-
-        searchField.setVisibility(View.VISIBLE);
         searchField.requestFocus();
         searchField.setSelection(searchField.getText().length());
 
@@ -64,12 +57,6 @@ public class SearchFragment extends Fragment implements AbsListView.OnScrollList
         DrawerLayout drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
         View drawer = getActivity().findViewById(R.id.drawer);
         drawerLayout.closeDrawer(drawer);
-
-        // Set the titlebar
-        titlebar = (LinearLayout) getActivity().findViewById(R.id.header);
-        ObjectAnimator colorFade = ObjectAnimator.ofObject(titlebar, "backgroundColor", new ArgbEvaluator(), ((ColorDrawable) titlebar.getBackground()).getColor(), Color.parseColor("#151515"));
-        colorFade.setDuration(300);
-        colorFade.start();
 
         final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -201,7 +188,6 @@ public class SearchFragment extends Fragment implements AbsListView.OnScrollList
             if (!articlesList.isLoading() && scrollState == SCROLL_STATE_IDLE) {
                 if (listView.getLastVisiblePosition() >= listView.getCount() - 1 - threshold) {
                     articlesList.loadJSON(getResources().getString(R.string.URL_ARTICLES) + "?search=" + searchTerms + "&ln=" + articlesList.getLastNode());
-
                 }
             }
         }

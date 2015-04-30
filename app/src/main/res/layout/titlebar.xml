@@ -6,12 +6,13 @@
     android:orientation="horizontal">
 
     <ImageButton
-        android:id="@+id/header_more"
+        android:id="@+id/header_menu"
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:layout_gravity="center"
         android:background="@drawable/highlight"
-        android:src="@drawable/more" />
+        android:src="@drawable/more"
+        android:visibility="gone" />
 
     <ImageButton
         android:id="@+id/header_back"
@@ -28,7 +29,17 @@
         android:layout_height="30dp"
         android:layout_gravity="center"
         android:layout_weight="1"
-        android:src="@drawable/logo" />
+        android:src="@drawable/logo"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/logo_rings"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:src="@drawable/rings"
+        android:visibility="gone" />
 
     <EditText
         android:id="@+id/header_search_field"
@@ -41,7 +52,8 @@
         android:imeOptions="actionSearch"
         android:singleLine="true"
         android:textColor="#ffffff"
-        android:textColorHint="#757575" />
+        android:textColorHint="#757575"
+        android:visibility="gone" />
 
     <ImageButton
         android:id="@+id/header_search"
@@ -49,6 +61,25 @@
         android:layout_height="55dp"
         android:layout_gravity="center"
         android:background="@drawable/highlight"
-        android:src="@drawable/search" />
+        android:src="@drawable/search"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/header_share"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_gravity="center"
+        android:background="@drawable/highlight"
+        android:src="@drawable/share"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/header_rings_call"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_gravity="center"
+        android:background="@drawable/highlight"
+        android:src="@drawable/phone"
+        android:visibility="gone" />
 
 </LinearLayout>

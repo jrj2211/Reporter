@@ -1,15 +1,10 @@
 package com.reportermag.reporter.listeners;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.reportermag.reporter.R;
 import com.reportermag.reporter.fragments.AuthorFragment;
@@ -39,15 +34,9 @@ public class AuthorListener implements View.OnClickListener {
         Fragment articleFrag = new AuthorFragment();
         articleFrag.setArguments(bundle);
 
+        transaction.setCustomAnimations(R.animator.enter_anim, R.animator.exit_anim);
         transaction.replace(R.id.fragment_container, articleFrag);
         transaction.addToBackStack(null);
-
-        transaction.setCustomAnimations(R.animator.enter_anim, R.animator.exit_anim);
-
-        LinearLayout titlebar = (LinearLayout) activity.findViewById(R.id.header);
-        ObjectAnimator colorFade = ObjectAnimator.ofObject(titlebar, "backgroundColor", new ArgbEvaluator(), ((ColorDrawable) titlebar.getBackground()).getColor(), Color.parseColor("#151515"));
-        colorFade.setDuration(300);
-        colorFade.start();
 
         // Commit the new fragment
         transaction.commit();

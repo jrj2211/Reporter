@@ -91,9 +91,16 @@ public class ArticlesList extends ArrayAdapter<String> implements AsyncResponse 
             nodeColor = Color.parseColor(article.getString("section_color"));
 
             if (!nodeSection.isEmpty()) {
-                holder.section.setText(nodeSection);
-                GradientDrawable bgShape = (GradientDrawable) holder.section.getBackground();
-                bgShape.setColor(nodeColor);
+                String resourceName = article.getString("section_name").replaceAll("[^a-zA-Z]+", "").toLowerCase(); // image files are lowercase with only a-z characters
+                int background = context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
+
+                if (background != 0) {
+                    holder.section.setBackgroundResource(background);
+                } else {
+                    holder.section.setText(nodeSection);
+                    GradientDrawable bgShape = (GradientDrawable) holder.section.getBackground();
+                    bgShape.setColor(nodeColor);
+                }
             } else {
                 holder.section.setVisibility(TextView.GONE);
             }

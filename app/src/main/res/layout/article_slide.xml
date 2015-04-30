@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -14,16 +14,16 @@
             android:layout_height="wrap_content" />
 
 
-
     </RelativeLayout>
 
     <TextView
         android:id="@+id/slide_caption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/graydark"
         android:padding="10dp"
         android:textColor="@android:color/white"
-        android:background="#ff0000" />
+        android:visibility="gone" />
 
 </LinearLayout>
 

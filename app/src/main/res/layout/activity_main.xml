@@ -4,20 +4,11 @@
     android:layout_height="match_parent">
 
     <!-- The main content view -->
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#ffffff">
-
-        <!-- Where the fragments go -->
-        <FrameLayout
-            android:id="@+id/fragment_container"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="#ffffff"
-            android:orientation="vertical">
-
-        </FrameLayout>
 
     </FrameLayout>
 
@@ -27,12 +18,14 @@
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#303030"
+        android:background="#f1f1f1"
         android:choiceMode="singleChoice"
-        android:divider="#303030"
+        android:divider="#c1c1c1"
         android:dividerHeight="0dp"
         android:paddingBottom="10dp"
-        android:paddingLeft="10dp">
+        android:paddingLeft="10dp"
+        android:scrollbarSize="0dp"
+        android:scrollbars="none">
 
         <LinearLayout
             android:id="@+id/drawer_container"

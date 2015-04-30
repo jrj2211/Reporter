@@ -8,8 +8,8 @@ android {
         applicationId "com.reportermag.reporter"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 12
-        versionName "1.0.0"
+        versionCode 15
+        versionName "1.0.7"
     }
     buildTypes {
         release {

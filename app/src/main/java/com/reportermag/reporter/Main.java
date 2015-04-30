@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -38,7 +39,10 @@ public class Main extends CustomActivity implements AsyncResponse {
 
         sections = new HashMap<>();
 
-        (findViewById(R.id.header_more)).setOnClickListener(new View.OnClickListener() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
+
+        (findViewById(R.id.header_menu)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
@@ -93,7 +97,7 @@ public class Main extends CustomActivity implements AsyncResponse {
 
                     JSONObject sectionInfo = json.getJSONObject(i);
                     Button sectionButton = (Button) inflater.inflate(R.layout.drawer_button, drawer, false);
-                    sectionButton.setText(sectionInfo.getString("name").toUpperCase());
+                    sectionButton.setText(sectionInfo.getString("name"));
 
                     try {
                         sectionButton.setTag(Integer.parseInt(sectionInfo.getString("id")));
@@ -102,13 +106,8 @@ public class Main extends CustomActivity implements AsyncResponse {
                     }
 
                     String sectionColor = sectionInfo.getString("color");
+                    sectionButton.setTextColor(Color.parseColor("#252525"));
 
-                    try {
-                        Color.parseColor(sectionColor);
-                        sectionButton.setTextColor(Color.parseColor(sectionColor));
-                    } catch (Exception e) {
-                        sectionButton.setTextColor(Color.parseColor("#ffffff"));
-                    }
 
                     sectionButton.setOnClickListener(new View.OnClickListener() {
 
@@ -138,8 +137,8 @@ public class Main extends CustomActivity implements AsyncResponse {
 
             // Add Rings
             Button ringsButton = (Button) inflater.inflate(R.layout.drawer_button, drawer, false);
-            ringsButton.setText("RINGS");
-            ringsButton.setTextColor(Color.parseColor("#188f6c"));
+            ringsButton.setText("Rings");
+            ringsButton.setTextColor(Color.parseColor("#252525"));
             ringsButton.setOnClickListener(new View.OnClickListener() {
 
                 public void onClick(View v) {

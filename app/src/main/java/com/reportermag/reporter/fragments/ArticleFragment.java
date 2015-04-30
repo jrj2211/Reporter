@@ -1,11 +1,13 @@
 package com.reportermag.reporter.fragments;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
+import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
@@ -28,6 +30,7 @@ import com.reportermag.reporter.util.InternalClickableSpan;
 import com.reportermag.reporter.util.LinkClickableSpan;
 import com.reportermag.reporter.util.PageContents;
 import com.reportermag.reporter.util.ScrollImageView;
+import com.reportermag.reporter.util.Titlebar;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -48,16 +51,14 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
 
         this.inflater = inflater;
 
-        // Set titlebar visibility
-        getActivity().findViewById(R.id.header_more).setVisibility(View.GONE);
-        getActivity().findViewById(R.id.header_search).setVisibility(View.VISIBLE);
-        getActivity().findViewById(R.id.logo).setVisibility(View.VISIBLE);
-        getActivity().findViewById(R.id.header_back).setVisibility(View.VISIBLE);
-        getActivity().findViewById(R.id.header_search_field).setVisibility(View.GONE);
-
         // Get article to load
         Bundle arguments = this.getArguments();
         nodeID = arguments.getInt("id");
+
+        // Set the titlebar
+        Titlebar.setColor(arguments.getInt("color"));
+        Titlebar.setVisible(Titlebar.VIEWS.BACK, Titlebar.VIEWS.LOGO);
+
 
         // Get the page contents for the article
         if (nodeID != 0) {
@@ -159,15 +160,19 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
         try {
             JSONArray images = json.getJSONArray("slideshow");
 
-            if(images.length() > 0) {
+            if (images.length() > 0) {
                 viewFlipper.setVisibility(LinearLayout.VISIBLE);
                 for (int x = 0; x < images.length(); x++) {
                     try {
                         LinearLayout slide = (LinearLayout) inflater.inflate(R.layout.article_slide, viewFlipper, false);
 
                         TextView caption = (TextView) slide.findViewById(R.id.slide_caption);
-                        caption.setBackgroundColor(sectionColor);
-                        caption.setText(images.getJSONObject(x).getString("caption"));
+                        String captionText = images.getJSONObject(x).getString("caption");
+
+                        if (!captionText.isEmpty()) {
+                            caption.setBackgroundColor(sectionColor);
+                            caption.setText(images.getJSONObject(x).getString("caption"));
+                        }
 
                         ScrollImageView image = (ScrollImageView) slide.findViewById(R.id.slide_image);
 
@@ -177,10 +182,13 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
                                 Integer.parseInt(images.getJSONObject(x).getString("imgHeight")));
 
                         viewFlipper.addView(slide);
-                    } catch (Exception e) { Log.e(TAG, "Error loading slide show image " +Integer.toString(x)); }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error loading slide show image " + Integer.toString(x));
+                    }
                 }
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         buffer = new SpannableStringBuilder();
 
@@ -204,8 +212,28 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
             webDisqus.requestFocusFromTouch();
             webDisqus.setWebViewClient(new WebViewClient());
             webDisqus.setWebChromeClient(new WebChromeClient());
-            webDisqus.loadUrl("http://reporter.rit.edu/sites/disqus.php?identifier=" + json.getString("disqus") + "&color=" + json.getString("sectionColor").replaceAll("#",""));
-        } catch (Exception e) {}
+            webDisqus.loadUrl("http://reporter.rit.edu/sites/disqus.php?identifier=" + json.getString("disqus") + "&color=" + json.getString("sectionColor").replaceAll("#", ""));
+        } catch (Exception e) {
+        }
+
+        // Share Article
+        try {
+            final String articleTitle = json.getString("title");
+            final String articleLink = json.getString("articleLink");
+            Titlebar.setVisible(Titlebar.VIEWS.BACK, Titlebar.VIEWS.LOGO, Titlebar.VIEWS.SHARE);
+            (getActivity().findViewById(R.id.header_share)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Start Text Messaging
+                    Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                    sharingIntent.setType("text/plain");
+                    sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, articleLink);
+                    startActivity(Intent.createChooser(sharingIntent, "Share Reporter Article Via"));
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Could not create share");
+        }
     }
 
     private void parse(JSONArray json, boolean outerContainer) {
@@ -217,7 +245,7 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
                     parse(element.getJSONArray("contents"), false);
 
                     boolean last = false;
-                    if(outerContainer && i == json.length()-1) {
+                    if (outerContainer && i == json.length() - 1) {
                         last = true;
                     }
 
@@ -236,9 +264,13 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
         switch (tag) {
             case "p":
             case "div":
-                if(!last) {
+                if (!last) {
                     buffer.append(newLine + newLine);
                 }
+                break;
+            case "blockquote":
+                buffer.setSpan(new StyleSpan(Typeface.ITALIC), start, buffer.length(), 0);
+                buffer.setSpan(new RelativeSizeSpan(1.2f), start, buffer.length(), 0);
                 break;
             case "u":
                 buffer.setSpan(new UnderlineSpan(), start, buffer.length(), 0);
@@ -254,7 +286,9 @@ public class ArticleFragment extends Fragment implements AsyncResponse {
             case "a":
                 try {
                     buffer.setSpan(new LinkClickableSpan(getActivity(), json.getString("href"), sectionColor), start, buffer.length(), 0);
-                } catch (Exception e) { Log.e(TAG, "Could not make link"); }
+                } catch (Exception e) {
+                    Log.e(TAG, "Could not make link");
+                }
                 break;
         }
     }
